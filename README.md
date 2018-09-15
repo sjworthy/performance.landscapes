@@ -1,4 +1,4 @@
-# Alternative designs in tropical tree seedling performance landscapes
+# Alternative designs and tropical tree seedling performance landscapes
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1296546.svg)](https://doi.org/10.5281/zenodo.1296546)
 
