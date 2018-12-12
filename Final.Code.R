@@ -207,8 +207,8 @@ library(visreg)
 par(mfrow=c(2,2))
 visreg2d(lma.light.model, "log.lma", "log.light", plot.type="image", xlab="Leaf Mass per Area", ylab="Light", main="")
 visreg2d(lma.light.model, "log.lma", "log.light", plot.type="persp", ylab="Light", zlab="\nRelative Growth Rate", xlab="Leaf Mass per Area", main="Relative Growth Rate = f(Leaf Mass per Area*Light)",cex.main=1,nn=99, cex.lab=1,lwd=0.5, border="grey40", col=adjustcolor("blue",alpha.f=.5))
-visreg2d(rmf.light.model, "log.rmf", "log.light", plot.type="image", xlab="Root Mass Fraction)", ylab="Light", main="")
-visreg2d(rmf.light.model, "log.rmf", "log.light", plot.type="persp", ylab="Light", zlab="\nRelative Growth Rate", xlab="Root Mass Fraction)", main="Relative Growth Rate = f(Root Mass Fraction*Light)",cex.main=1,nn=99, cex.lab=1,lwd=0.5, border="grey40", col=adjustcolor("blue",alpha.f=.5))
+visreg2d(rmf.light.model, "log.rmf", "log.light", plot.type="image", xlab="Root Mass Fraction", ylab="Light", main="")
+visreg2d(rmf.light.model, "log.rmf", "log.light", plot.type="persp", ylab="Light", zlab="\nRelative Growth Rate", xlab="Root Mass Fraction", main="Relative Growth Rate = f(Root Mass Fraction*Light)",cex.main=1,nn=99, cex.lab=1,lwd=0.5, border="grey40", col=adjustcolor("blue",alpha.f=.5))
 
 # Conceptual model, Figure 1
 
@@ -237,9 +237,9 @@ persp(te.linear.pred2$x,te.linear.pred2$y,te.linear.pred2$z, theta = 30, phi = 2
 
       main="(B) High end of environmental gradient",cex.lab=1,lwd=0.5, border="grey40", col=adjustcolor("blue",alpha.f=.5))
 
-# Level plots; Figure S1-S7
+# Level plots; Figure S4-S13
 
-# LMA x RMF x Light; Figure 3 and Figure S1
+# LMA x RMF x Light; Figure 3 and Figure S4
 
 # Vector of the range of light by 0.1
 
@@ -249,61 +249,66 @@ vec=seq(-2.6,3.0, by=0.1)
 
 quantile(vec, probs=seq(0,1,0.1))
 
-# Expand the range of the variables in the model while holding light constant at each 10% of its range
+# Subset the main all.data for each light quantile
 
-data.low=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-2.6))
-data.10=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-2.04))
-data.20=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-1.48))
-data.30=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-0.92))
-data.40=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-0.36))
-data.med=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=0.20))
-data.60=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=0.76))
-data.70=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=1.32))
-data.80=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=1.88))
-data.90=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=2.44))
-data.high=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=3.0))
+Q10.light=subset(all.data, all.data$log.light < -2.04)
+Q20.light=subset(all.data, all.data$log.light >= -2.04 & all.data$log.light < -1.48)
+Q30.light=subset(all.data, all.data$log.light >= -1.48 & all.data$log.light < -0.92)
+Q40.light=subset(all.data, all.data$log.light >= -0.92 & all.data$log.light < -0.36)
+Q50.light=subset(all.data, all.data$log.light >= -0.36 & all.data$log.light < 0.20)
+Q60.light=subset(all.data, all.data$log.light >= 0.20 & all.data$log.light < 0.76)
+Q70.light=subset(all.data, all.data$log.light >= 0.76 & all.data$log.light < 1.32)
+Q80.light=subset(all.data, all.data$log.light >= 1.32 & all.data$log.light < 1.88)
+Q90.light=subset(all.data, all.data$log.light >= 1.88 & all.data$log.light < 2.44)
+Q100.light=subset(all.data, all.data$log.light >= 2.44 & all.data$log.light <= 3.00)
+
+
+all.data.10=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-2.04))
+all.data.20=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-1.48))
+all.data.30=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-0.92))
+all.data.40=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=-0.36))
+all.data.50=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=0.20))
+all.data.60=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=0.76))
+all.data.70=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=1.32))
+all.data.80=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=1.88))
+all.data.90=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=2.44))
+all.data.100=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10),log.light=3.0))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(lma.rmf.light,data.low, re.form=NA)
-p.10=predict(lma.rmf.light,data.10, re.form=NA)
-p.20=predict(lma.rmf.light,data.20, re.form=NA)
-p.30=predict(lma.rmf.light,data.30, re.form=NA)
-p.40=predict(lma.rmf.light,data.40, re.form=NA)
-p.med=predict(lma.rmf.light,data.med, re.form=NA)
-p.60=predict(lma.rmf.light,data.60, re.form=NA)
-p.70=predict(lma.rmf.light,data.70, re.form=NA)
-p.80=predict(lma.rmf.light,data.80, re.form=NA)
-p.90=predict(lma.rmf.light,data.90, re.form=NA)
-p.high=predict(lma.rmf.light,data.high, re.form=NA)
+p.10=predict(lma.rmf.light,all.data.10, re.form=NA)
+p.20=predict(lma.rmf.light,all.data.20, re.form=NA)
+p.30=predict(lma.rmf.light,all.data.30, re.form=NA)
+p.40=predict(lma.rmf.light,all.data.40, re.form=NA)
+p.50=predict(lma.rmf.light,all.data.50, re.form=NA)
+p.60=predict(lma.rmf.light,all.data.60, re.form=NA)
+p.70=predict(lma.rmf.light,all.data.70, re.form=NA)
+p.80=predict(lma.rmf.light,all.data.80, re.form=NA)
+p.90=predict(lma.rmf.light,all.data.90, re.form=NA)
+p.100=predict(lma.rmf.light,all.data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-light.low.df=data.low[,1:2]
-light.low.df[,3]=p.low
-colnames(light.low.df)[3]="rgr"
-light.10.df=data.10[,1:2]
+light.10.df=all.data.10[,1:2]
 light.10.df[,3]=p.10
-light.20.df=data.20[,1:2]
+light.20.df=all.data.20[,1:2]
 light.20.df[,3]=p.20
-light.30.df=data.30[,1:2]
+light.30.df=all.data.30[,1:2]
 light.30.df[,3]=p.30
-light.40.df=data.40[,1:2]
+light.40.df=all.data.40[,1:2]
 light.40.df[,3]=p.40
-light.med.df=data.med[,1:2]
-light.med.df[,3]=p.med
-colnames(light.med.df)[3]="rgr"
-light.60.df=data.60[,1:2]
+light.50.df=all.data.50[,1:2]
+light.50.df[,3]=p.50
+light.60.df=all.data.60[,1:2]
 light.60.df[,3]=p.60
-light.70.df=data.70[,1:2]
+light.70.df=all.data.70[,1:2]
 light.70.df[,3]=p.70
-light.80.df=data.80[,1:2]
+light.80.df=all.data.80[,1:2]
 light.80.df[,3]=p.80
-light.90.df=data.90[,1:2]
+light.90.df=all.data.90[,1:2]
 light.90.df[,3]=p.90
-light.high.df=data.high[,1:2]
-light.high.df[,3]=p.high
-colnames(light.high.df)[3]="rgr"
+light.100.df=all.data.100[,1:2]
+light.100.df[,3]=p.100
 
 # Fit linear models of predicted data for graphical formatting
 
@@ -318,26 +323,63 @@ visreg2d(new.model.low, "log.lma", "log.rmf", plot.type="persp", ylab="\nRoot Ma
 visreg2d(new.model.med, "log.lma", "log.rmf", plot.type="persp", ylab="\nRoot Mass Fraction", zlab="\nRelative Growth Rate", xlab="\nLeaf Mass per Area", cex.main=1, theta=30, cex.lab=1,lwd=0.5, border="grey40", col=adjustcolor("blue",alpha.f=.5))
 visreg2d(new.model.high, "log.lma", "log.rmf", plot.type="persp", ylab="\nRoot Mass Fraction", zlab="\nRelative Growth Rate", xlab="\nLeaf Mass per Area",cex.main=1, theta=30, cex.lab=1,lwd=0.5, border="grey40", col=adjustcolor("blue",alpha.f=.5))
 
-# Figure S1
+# Figure S4
 
 library(lattice)
-library(gridExtra)
 library(colorspace)
 
-light.low=levelplot(rgr~log.lma*log.rmf, data=light.low.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="0%", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75))
-light.10=levelplot(V3~log.lma*log.rmf, data=light.10.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="10%", cex=.75), ylab="",xlab=list(label="Leaf Mass per Area", cex=.75))
-light.20=levelplot(V3~log.lma*log.rmf, data=light.20.df,col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="20%", cex=.75), ylab="",xlab=list(label="Leaf Mass per Area", cex=.75))
-light.30=levelplot(V3~log.lma*log.rmf, data=light.30.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="30%", cex=.75),ylab="",xlab=list(label="Leaf Mass per Area", cex=.75))
-light.40=levelplot(V3~log.lma*log.rmf, data=light.40.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="40%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75))
-light.med=levelplot(rgr~log.lma*log.rmf, data=light.med.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="50%", cex=.75),ylab="",xlab=list(label="Leaf Mass per Area", cex=.75))
-light.60=levelplot(V3~log.lma*log.rmf, data=light.60.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="60%", cex=.75),ylab="",xlab=list(label="Leaf Mass per Area", cex=.75))
-light.70=levelplot(V3~log.lma*log.rmf, data=light.70.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="70%", cex=.75),ylab="",xlab=list(label="Leaf Mass per Area", cex=.75))
-light.80=levelplot(V3~log.lma*log.rmf, data=light.80.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="80%", cex=.75),ylab=list(label="Root Mass Fraction",cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75))
-light.90=levelplot(V3~log.lma*log.rmf, data=light.90.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="90%", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-light.high=levelplot(rgr~log.lma*log.rmf, data=light.high.df, col.regions=diverge_hcl(50),at=seq(-2.5,6.5, 1), main=list(label="100%", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-grid.arrange(light.low,light.10,light.20,light.30,light.40,light.med,light.60,light.70,light.80,light.90,light.high, nrow=3,ncol=4)
+range(Q10.light$log.lma)
+range(Q10.light$log.rmf)
+range(Q20.light$log.lma)
+range(Q20.light$log.rmf)
+range(Q30.light$log.lma)
+range(Q30.light$log.rmf)
+range(Q40.light$log.lma)
+range(Q40.light$log.rmf)
+range(Q50.light$log.lma)
+range(Q50.light$log.rmf)
+range(Q60.light$log.lma)
+range(Q60.light$log.rmf)
+range(Q70.light$log.lma)
+range(Q70.light$log.rmf)
+range(Q80.light$log.lma)
+range(Q80.light$log.rmf)
+range(Q90.light$log.lma)
+range(Q90.light$log.rmf)
+range(Q100.light$log.lma)
+range(Q100.light$log.rmf)
 
-# Figure S2
+light.10=levelplot(V3~log.lma*log.rmf, data=light.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75) ,xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.6,2.0), ylim=c(-3.4, 2.0))
+new.10=light.10 + latticeExtra::layer(panel.points(Q10.light$log.lma, Q10.light$log.rmf, col="black"))
+
+light.20=levelplot(V3~log.lma*log.rmf, data=light.20.df,col.regions=diverge_hcl(50),main=list(label="10%-19%", cex=.75), ylab="",xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-1.6,2.2), ylim=c(-2.0, 2.6))
+new.20=light.20 + latticeExtra::layer(panel.points(Q20.light$log.lma, Q20.light$log.rmf, col="black"))
+
+light.30=levelplot(V3~log.lma*log.rmf, data=light.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),ylab="",xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.4,2.5), ylim=c(-2.2, 3.4))
+new.30=light.30 + latticeExtra::layer(panel.points(Q30.light$log.lma, Q30.light$log.rmf, col="black"))
+
+light.40=levelplot(V3~log.lma*log.rmf, data=light.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-2.7,2.7), ylim=c(-3.5, 3.4))
+new.40=light.40 + latticeExtra::layer(panel.points(Q40.light$log.lma, Q40.light$log.rmf, col="black"))
+
+light.50=levelplot(V3~log.lma*log.rmf, data=light.50.df, col.regions=diverge_hcl(50), main=list(label="40%-49%", cex=.75),ylab="",xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.5,2.7), ylim=c(-3.0, 3.2))
+new.50=light.50 + latticeExtra::layer(panel.points(Q50.light$log.lma, Q50.light$log.rmf, col="black"))
+
+light.60=levelplot(V3~log.lma*log.rmf, data=light.60.df, col.regions=diverge_hcl(50), main=list(label="50%-59%", cex=.75),ylab="",xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.1, 3.2), ylim=c(-5.6, 3.4))
+new.60=light.60 + latticeExtra::layer(panel.points(Q60.light$log.lma, Q60.light$log.rmf, col="black"))
+
+light.70=levelplot(V3~log.lma*log.rmf, data=light.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.4, 3.1), ylim=c(-2.8, 2.9))
+new.70=light.70 + latticeExtra::layer(panel.points(Q70.light$log.lma, Q70.light$log.rmf, col="black"))
+
+light.80=levelplot(V3~log.lma*log.rmf, data=light.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75),ylab="", xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.6, 3.3), ylim=c(-2.4, 2.7))
+new.80=light.80 + latticeExtra::layer(panel.points(Q80.light$log.lma, Q80.light$log.rmf, col="black"))
+
+light.90=levelplot(V3~log.lma*log.rmf, data=light.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-0.7, 2.2), ylim=c(-1.1, 2.1))
+new.90=light.90 + latticeExtra::layer(panel.points(Q90.light$log.lma, Q90.light$log.rmf, col="black"))
+
+light.100=levelplot(V3~log.lma*log.rmf, data=light.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-0.7, 0.6), ylim=c(-1.5, 0.7))
+new.100=light.100 + latticeExtra::layer(panel.points(Q100.light$log.lma, Q100.light$log.rmf, col="black"))
+
+# Figure S6
 
 #  mean leaf thickness x SMF x soil PC1
 
@@ -349,38 +391,48 @@ vec=seq(-6.0,6.1, by=0.3)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Subset the main all.data for each soil quantile
+
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.8)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.8 & all.data$Comp.1 < -3.6)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.6 & all.data$Comp.1 < -2.4)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.4 & all.data$Comp.1 < -1.2)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.2 & all.data$Comp.1 < 0.0)
+Q60.soil=subset(all.data, all.data$Comp.1 >= 0.0 & all.data$Comp.1 < 1.2)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 1.2 & all.data$Comp.1 < 2.4)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 2.4 & all.data$Comp.1 < 3.6)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 3.6 & all.data$Comp.1 < 4.8)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 4.8 & all.data$Comp.1 <= 6.1)
+
+
 # Expand the range of the variables in the model while holding soil PC1 constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=-6.0))
 data.10=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=-4.8))
 data.20=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=-3.6))
 data.30=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=-2.4))
 data.40=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=-1.2))
-data.med=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=0.0))
+data.50=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=0.0))
 data.60=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=1.2))
 data.70=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=2.4))
 data.80=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=3.6))
 data.90=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=4.8))
-data.high=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=6.1))
+data.100=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.smf=seq(-6.5,3.0,length.out=10), Comp.1=6.1))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(thick.smf.pc1,data.low, re.form=NA)
 p.10=predict(thick.smf.pc1,data.10, re.form=NA)
 p.20=predict(thick.smf.pc1,data.20, re.form=NA)
 p.30=predict(thick.smf.pc1,data.30, re.form=NA)
 p.40=predict(thick.smf.pc1,data.40, re.form=NA)
-p.med=predict(thick.smf.pc1,data.med, re.form=NA)
+p.50=predict(thick.smf.pc1,data.50, re.form=NA)
 p.60=predict(thick.smf.pc1,data.60, re.form=NA)
 p.70=predict(thick.smf.pc1,data.70, re.form=NA)
 p.80=predict(thick.smf.pc1,data.80, re.form=NA)
 p.90=predict(thick.smf.pc1,data.90, re.form=NA)
-p.high=predict(thick.smf.pc1,data.high, re.form=NA)
+p.100=predict(thick.smf.pc1,data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-comp1.low.df=data.low[,1:2]
-comp1.low.df[,3]=p.low
 comp1.10.df=data.10[,1:2]
 comp1.10.df[,3]=p.10
 comp1.20.df=data.20[,1:2]
@@ -389,8 +441,8 @@ comp1.30.df=data.30[,1:2]
 comp1.30.df[,3]=p.30
 comp1.40.df=data.40[,1:2]
 comp1.40.df[,3]=p.40
-comp1.med.df=data.med[,1:2]
-comp1.med.df[,3]=p.med
+comp1.50.df=data.50[,1:2]
+comp1.50.df[,3]=p.50
 comp1.60.df=data.60[,1:2]
 comp1.60.df[,3]=p.60
 comp1.70.df=data.70[,1:2]
@@ -399,26 +451,63 @@ comp1.80.df=data.80[,1:2]
 comp1.80.df[,3]=p.80
 comp1.90.df=data.90[,1:2]
 comp1.90.df[,3]=p.90
-comp1.high.df=data.high[,1:2]
-comp1.high.df[,3]=p.high
+comp1.100.df=data.100[,1:2]
+comp1.100.df[,3]=p.100
 
-# Figure S2
+# Figure S6
 
-comp1.low=levelplot(V3~log.mean.thick*log.smf, data=comp1.low.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="0%", cex=.75), ylab=list(label="Stem Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.10=levelplot(V3~log.mean.thick*log.smf, data=comp1.10.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1),main=list(label="10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp1.20=levelplot(V3~log.mean.thick*log.smf, data=comp1.20.df,col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="20%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.30=levelplot(V3~log.mean.thick*log.smf, data=comp1.30.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="30%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.40=levelplot(V3~log.mean.thick*log.smf, data=comp1.40.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="40%", cex=.75),ylab=list(label="Stem Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.med=levelplot(V3~log.mean.thick*log.smf, data=comp1.med.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1),main=list(label="50%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.60=levelplot(V3~log.mean.thick*log.smf, data=comp1.60.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="60%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.70=levelplot(V3~log.mean.thick*log.smf, data=comp1.70.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="70%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.80=levelplot(V3~log.mean.thick*log.smf, data=comp1.80.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="80%", cex=.75),ylab=list(label="Stem Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.90=levelplot(V3~log.mean.thick*log.smf, data=comp1.90.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="90%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp1.high=levelplot(V3~log.mean.thick*log.smf, data=comp1.high.df, col.regions=diverge_hcl(50),at=seq(-2.5,5.5, 1), main=list(label="100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-grid.arrange(comp1.low,comp1.10,comp1.20,comp1.30,comp1.40,comp1.med,comp1.60,comp1.70,comp1.80,comp1.90,comp1.high, nrow=3,ncol=4)
+range(Q10.soil$log.mean.thick)
+range(Q10.soil$log.smf)
+range(Q20.soil$log.mean.thick)
+range(Q20.soil$log.smf)
+range(Q30.soil$log.mean.thick)
+range(Q30.soil$log.smf)
+range(Q40.soil$log.mean.thick)
+range(Q40.soil$log.smf)
+range(Q50.soil$log.mean.thick)
+range(Q50.soil$log.smf)
+range(Q60.soil$log.mean.thick)
+range(Q60.soil$log.smf)
+range(Q70.soil$log.mean.thick)
+range(Q70.soil$log.smf)
+range(Q80.soil$log.mean.thick)
+range(Q80.soil$log.smf)
+range(Q90.soil$log.mean.thick)
+range(Q90.soil$log.smf)
+range(Q100.soil$log.mean.thick)
+range(Q100.soil$log.smf)
 
+comp1.10=levelplot(V3~log.mean.thick*log.smf, data=comp1.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Stem Mass Fraction", cex=.75), xlim=c(-1.6,1.3), ylim=c(-2.1,2.0))
+new.10=comp1.10 + latticeExtra::layer(panel.points(Q10.soil$log.mean.thick, Q10.soil$log.smf, col="black"))
 
-# Figure S3
+comp1.20=levelplot(V3~log.mean.thick*log.smf, data=comp1.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.6,2.6), ylim=c(-4.8,2.3))
+new.20=comp1.20 + latticeExtra::layer(panel.points(Q20.soil$log.mean.thick, Q20.soil$log.smf, col="black"))
+
+comp1.30=levelplot(V3~log.mean.thick*log.smf, data=comp1.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.8,2.8), ylim=c(-2.6,2.9))
+new.30=comp1.30 + latticeExtra::layer(panel.points(Q30.soil$log.mean.thick, Q30.soil$log.smf, col="black"))
+
+comp1.40=levelplot(V3~log.mean.thick*log.smf, data=comp1.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Stem Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-1.9,2.6), ylim=c(-2.6,2.3))
+new.40=comp1.40 + latticeExtra::layer(panel.points(Q40.soil$log.mean.thick, Q40.soil$log.smf, col="black"))
+
+comp1.50=levelplot(V3~log.mean.thick*log.smf, data=comp1.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),xlim=c(-1.9,2.8), ylim=c(-5.1,2.1), ylab="")
+new.50=comp1.50 + latticeExtra::layer(panel.points(Q50.soil$log.mean.thick, Q50.soil$log.smf, col="black"))
+
+comp1.60=levelplot(V3~log.mean.thick*log.smf, data=comp1.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.9,3.2), ylim=c(-6.6,2.2))
+new.60=comp1.60 + latticeExtra::layer(panel.points(Q60.soil$log.mean.thick, Q60.soil$log.smf, col="black"))
+
+comp1.70=levelplot(V3~log.mean.thick*log.smf, data=comp1.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab=list(label="Stem Mass Fraction", cex=.75), xlim=c(-2.1,2.2), ylim=c(-6.1,3.1))
+new.70=comp1.70 + latticeExtra::layer(panel.points(Q70.soil$log.mean.thick, Q70.soil$log.smf, col="black"))
+
+comp1.80=levelplot(V3~log.mean.thick*log.smf, data=comp1.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-2.2,2.4), ylim=c(-6.6,1.9), ylab="")
+new.80=comp1.80 + latticeExtra::layer(panel.points(Q80.soil$log.mean.thick, Q80.soil$log.smf, col="black"))
+
+comp1.90=levelplot(V3~log.mean.thick*log.smf, data=comp1.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="", xlim=c(-1.5,2.2), ylim=c(-2.9,1.6))
+new.90=comp1.90 + latticeExtra::layer(panel.points(Q90.soil$log.mean.thick, Q90.soil$log.smf, col="black"))
+
+comp1.100=levelplot(V3~log.mean.thick*log.smf, data=comp1.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Stem Mass Fraction", cex=.75), xlim=c(-1.5,2.7), ylim=c(-4.7,1.5))
+new.100=comp1.100 + latticeExtra::layer(panel.points(Q100.soil$log.mean.thick, Q100.soil$log.smf, col="black"))
+
+# Figure S7
 
 #  mean leaf thickness x RMF x soil PC1
 
@@ -430,38 +519,46 @@ vec=seq(-6.0,6.1, by=0.3)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Subset the main all.data for each soil quantile
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.8)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.8 & all.data$Comp.1 < -3.6)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.6 & all.data$Comp.1 < -2.4)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.4 & all.data$Comp.1 < -1.2)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.2 & all.data$Comp.1 < 0.0)
+Q60.soil=subset(all.data, all.data$Comp.1 >= 0.0 & all.data$Comp.1 < 1.2)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 1.2 & all.data$Comp.1 < 2.4)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 2.4 & all.data$Comp.1 < 3.6)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 3.6 & all.data$Comp.1 < 4.8)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 4.8 & all.data$Comp.1 <= 6.1)
+
 # Expand the range of the variables in the model while holding soil PC1 constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-6.0))
 data.10=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-4.8))
 data.20=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-3.6))
 data.30=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-2.4))
 data.40=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-1.2))
-data.med=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=0.0))
+data.50=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=0.0))
 data.60=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=1.2))
 data.70=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=2.4))
 data.80=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=3.6))
 data.90=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=4.8))
-data.high=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=6.1))
+data.100=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=6.1))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(thick.rmf.pc1,data.low, re.form=NA)
 p.10=predict(thick.rmf.pc1,data.10, re.form=NA)
 p.20=predict(thick.rmf.pc1,data.20, re.form=NA)
 p.30=predict(thick.rmf.pc1,data.30, re.form=NA)
 p.40=predict(thick.rmf.pc1,data.40, re.form=NA)
-p.med=predict(thick.rmf.pc1,data.med, re.form=NA)
+p.50=predict(thick.rmf.pc1,data.50, re.form=NA)
 p.60=predict(thick.rmf.pc1,data.60, re.form=NA)
 p.70=predict(thick.rmf.pc1,data.70, re.form=NA)
 p.80=predict(thick.rmf.pc1,data.80, re.form=NA)
 p.90=predict(thick.rmf.pc1,data.90, re.form=NA)
-p.high=predict(thick.rmf.pc1,data.high, re.form=NA)
+p.100=predict(thick.rmf.pc1,data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-comp1.low.df=data.low[,1:2]
-comp1.low.df[,3]=p.low
 comp1.10.df=data.10[,1:2]
 comp1.10.df[,3]=p.10
 comp1.20.df=data.20[,1:2]
@@ -470,8 +567,8 @@ comp1.30.df=data.30[,1:2]
 comp1.30.df[,3]=p.30
 comp1.40.df=data.40[,1:2]
 comp1.40.df[,3]=p.40
-comp1.med.df=data.med[,1:2]
-comp1.med.df[,3]=p.med
+comp1.50.df=data.50[,1:2]
+comp1.50.df[,3]=p.50
 comp1.60.df=data.60[,1:2]
 comp1.60.df[,3]=p.60
 comp1.70.df=data.70[,1:2]
@@ -480,25 +577,63 @@ comp1.80.df=data.80[,1:2]
 comp1.80.df[,3]=p.80
 comp1.90.df=data.90[,1:2]
 comp1.90.df[,3]=p.90
-comp1.high.df=data.high[,1:2]
-comp1.high.df[,3]=p.high
+comp1.100.df=data.100[,1:2]
+comp1.100.df[,3]=p.100
 
-# Figure S3
+# Figure S7
 
-comp1.low=levelplot(V3~log.mean.thick*log.rmf, data=comp1.low.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="0%", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.10=levelplot(V3~log.mean.thick*log.rmf, data=comp1.10.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1),main=list(label="10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp1.20=levelplot(V3~log.mean.thick*log.rmf, data=comp1.20.df,col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="20%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.30=levelplot(V3~log.mean.thick*log.rmf, data=comp1.30.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="30%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.40=levelplot(V3~log.mean.thick*log.rmf, data=comp1.40.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="40%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.med=levelplot(V3~log.mean.thick*log.rmf, data=comp1.med.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1),main=list(label="50%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.60=levelplot(V3~log.mean.thick*log.rmf, data=comp1.60.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="60%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.70=levelplot(V3~log.mean.thick*log.rmf, data=comp1.70.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="70%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.80=levelplot(V3~log.mean.thick*log.rmf, data=comp1.80.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="80%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.90=levelplot(V3~log.mean.thick*log.rmf, data=comp1.90.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="90%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp1.high=levelplot(V3~log.mean.thick*log.rmf, data=comp1.high.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-grid.arrange(comp1.low,comp1.10,comp1.20,comp1.30,comp1.40,comp1.med,comp1.60,comp1.70,comp1.80,comp1.90,comp1.high, nrow=3,ncol=4)
+range(Q10.soil$log.mean.thick)
+range(Q10.soil$log.rmf)
+range(Q20.soil$log.mean.thick)
+range(Q20.soil$log.rmf)
+range(Q30.soil$log.mean.thick)
+range(Q30.soil$log.rmf)
+range(Q40.soil$log.mean.thick)
+range(Q40.soil$log.rmf)
+range(Q50.soil$log.mean.thick)
+range(Q50.soil$log.rmf)
+range(Q60.soil$log.mean.thick)
+range(Q60.soil$log.rmf)
+range(Q70.soil$log.mean.thick)
+range(Q70.soil$log.rmf)
+range(Q80.soil$log.mean.thick)
+range(Q80.soil$log.rmf)
+range(Q90.soil$log.mean.thick)
+range(Q90.soil$log.rmf)
+range(Q100.soil$log.mean.thick)
+range(Q100.soil$log.rmf)
 
-# Figure S4
+comp1.10=levelplot(V3~log.mean.thick*log.rmf, data=comp1.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-1.6,1.3), ylim=c(-3.4,1.3))
+new.10=comp1.10 + latticeExtra::layer(panel.points(Q10.soil$log.mean.thick, Q10.soil$log.rmf, col="black"))
+
+comp1.20=levelplot(V3~log.mean.thick*log.rmf, data=comp1.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.6,2.6), ylim=c(-2.4,2.6))
+new.20=comp1.20 + latticeExtra::layer(panel.points(Q20.soil$log.mean.thick, Q20.soil$log.rmf, col="black"))
+
+comp1.30=levelplot(V3~log.mean.thick*log.rmf, data=comp1.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.8,2.8), ylim=c(-3.3,2.2))
+new.30=comp1.30 + latticeExtra::layer(panel.points(Q30.soil$log.mean.thick, Q30.soil$log.rmf, col="black"))
+
+comp1.40=levelplot(V3~log.mean.thick*log.rmf, data=comp1.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-1.9,2.6), ylim=c(-2.6,2.1))
+new.40=comp1.40 + latticeExtra::layer(panel.points(Q40.soil$log.mean.thick, Q40.soil$log.rmf, col="black"))
+
+comp1.50=levelplot(V3~log.mean.thick*log.rmf, data=comp1.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),xlim=c(-1.9,2.8), ylim=c(-3.0,3.4), ylab="")
+new.50=comp1.50 + latticeExtra::layer(panel.points(Q50.soil$log.mean.thick, Q50.soil$log.rmf, col="black"))
+
+comp1.60=levelplot(V3~log.mean.thick*log.rmf, data=comp1.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.9,3.2), ylim=c(-2.4,3.3))
+new.60=comp1.60 + latticeExtra::layer(panel.points(Q60.soil$log.mean.thick, Q60.soil$log.rmf, col="black"))
+
+comp1.70=levelplot(V3~log.mean.thick*log.rmf, data=comp1.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-2.1,2.2), ylim=c(-5.6,3.4))
+new.70=comp1.70 + latticeExtra::layer(panel.points(Q70.soil$log.mean.thick, Q70.soil$log.rmf, col="black"))
+
+comp1.80=levelplot(V3~log.mean.thick*log.rmf, data=comp1.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-2.2,2.4), ylim=c(-3.5,3.4), ylab="")
+new.80=comp1.80 + latticeExtra::layer(panel.points(Q80.soil$log.mean.thick, Q80.soil$log.rmf, col="black"))
+
+comp1.90=levelplot(V3~log.mean.thick*log.rmf, data=comp1.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="", xlim=c(-1.5,2.2), ylim=c(-1.6,2.9))
+new.90=comp1.90 + latticeExtra::layer(panel.points(Q90.soil$log.mean.thick, Q90.soil$log.rmf, col="black"))
+
+comp1.100=levelplot(V3~log.mean.thick*log.rmf, data=comp1.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-1.5,2.7), ylim=c(-2.1,2.8))
+new.100=comp1.100 + latticeExtra::layer(panel.points(Q100.soil$log.mean.thick, Q100.soil$log.rmf, col="black"))
+
+# Figure S10
 
 # LMA x RMF x Soil PC2
 
@@ -510,38 +645,48 @@ vec=seq(-5.4,4.0, by=0.1)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Predict new values from the fitted model with the expanded data
+
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.46)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.46 & all.data$Comp.1 < -3.52)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.52 & all.data$Comp.1 < -2.58)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.58 & all.data$Comp.1 < -1.64)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.64 & all.data$Comp.1 < -0.70)
+Q60.soil=subset(all.data, all.data$Comp.1 >= -0.70 & all.data$Comp.1 < 0.24)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 0.24 & all.data$Comp.1 < 1.18)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 1.18 & all.data$Comp.1 < 2.12)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 2.12 & all.data$Comp.1 < 3.06)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 3.06 & all.data$Comp.1 <= 4.0)
+
+
 # Expand the range of the variables in the model while holding soil PC2 constant at each 10% of its range
 
-comp.2.data.low=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=-5.40))
 comp.2.data.10=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=-4.46))
 comp.2.data.20=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=-3.52))
 comp.2.data.30=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=-2.58))
 comp.2.data.40=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=-1.64))
-comp.2.data.med=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=-0.70))
+comp.2.data.50=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=-0.70))
 comp.2.data.60=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=0.24))
 comp.2.data.70=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=1.18))
 comp.2.data.80=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=2.12))
 comp.2.data.90=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=3.06))
-comp.2.data.high=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=4.0))
+comp.2.data.100=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.2=4.0))
 
 # Predict new values from the fitted model with the expanded data
 
-comp.2.p.low=predict(lma.rmf.pc2,comp.2.data.low, re.form=NA)
 comp.2.p.10=predict(lma.rmf.pc2,comp.2.data.10, re.form=NA)
 comp.2.p.20=predict(lma.rmf.pc2,comp.2.data.20, re.form=NA)
 comp.2.p.30=predict(lma.rmf.pc2,comp.2.data.30, re.form=NA)
 comp.2.p.40=predict(lma.rmf.pc2,comp.2.data.40, re.form=NA)
-comp.2.p.med=predict(lma.rmf.pc2,comp.2.data.med, re.form=NA)
+comp.2.p.50=predict(lma.rmf.pc2,comp.2.data.50, re.form=NA)
 comp.2.p.60=predict(lma.rmf.pc2,comp.2.data.60, re.form=NA)
 comp.2.p.70=predict(lma.rmf.pc2,comp.2.data.70, re.form=NA)
 comp.2.p.80=predict(lma.rmf.pc2,comp.2.data.80, re.form=NA)
 comp.2.p.90=predict(lma.rmf.pc2,comp.2.data.90, re.form=NA)
-comp.2.p.high=predict(lma.rmf.pc2,comp.2.data.high, re.form=NA)
+comp.2.p.100=predict(lma.rmf.pc2,comp.2.data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-comp2.low.df=comp.2.data.low[,1:2]
-comp2.low.df[,3]=comp.2.p.low
 comp2.10.df=comp.2.data.10[,1:2]
 comp2.10.df[,3]=comp.2.p.10
 comp2.20.df=comp.2.data.20[,1:2]
@@ -550,8 +695,8 @@ comp2.30.df=comp.2.data.30[,1:2]
 comp2.30.df[,3]=comp.2.p.30
 comp2.40.df=comp.2.data.40[,1:2]
 comp2.40.df[,3]=comp.2.p.40
-comp2.med.df=comp.2.data.med[,1:2]
-comp2.med.df[,3]=comp.2.p.med
+comp2.50.df=comp.2.data.50[,1:2]
+comp2.50.df[,3]=comp.2.p.50
 comp2.60.df=comp.2.data.60[,1:2]
 comp2.60.df[,3]=comp.2.p.60
 comp2.70.df=comp.2.data.70[,1:2]
@@ -560,25 +705,63 @@ comp2.80.df=comp.2.data.80[,1:2]
 comp2.80.df[,3]=comp.2.p.80
 comp2.90.df=comp.2.data.90[,1:2]
 comp2.90.df[,3]=comp.2.p.90
-comp2.high.df=comp.2.data.high[,1:2]
-comp2.high.df[,3]=comp.2.p.high
+comp2.100.df=comp.2.data.100[,1:2]
+comp2.100.df[,3]=comp.2.p.100
 
-# Figure S4
+# Figure S10
+range(Q10.soil$log.lma)
+range(Q10.soil$log.rmf)
+range(Q20.soil$log.lma)
+range(Q20.soil$log.rmf)
+range(Q30.soil$log.lma)
+range(Q30.soil$log.rmf)
+range(Q40.soil$log.lma)
+range(Q40.soil$log.rmf)
+range(Q50.soil$log.lma)
+range(Q50.soil$log.rmf)
+range(Q60.soil$log.lma)
+range(Q60.soil$log.rmf)
+range(Q70.soil$log.lma)
+range(Q70.soil$log.rmf)
+range(Q80.soil$log.lma)
+range(Q80.soil$log.rmf)
+range(Q90.soil$log.lma)
+range(Q90.soil$log.rmf)
+range(Q100.soil$log.lma)
+range(Q100.soil$log.rmf)
 
-comp2.low=levelplot(V3~log.lma*log.rmf, data=comp2.low.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="0%", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75))
-comp2.10=levelplot(V3~log.lma*log.rmf, data=comp2.10.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="10%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp2.20=levelplot(V3~log.lma*log.rmf, data=comp2.20.df,col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="20%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp2.30=levelplot(V3~log.lma*log.rmf, data=comp2.30.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="30%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp2.40=levelplot(V3~log.lma*log.rmf, data=comp2.40.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="40%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75))
-comp2.med=levelplot(V3~log.lma*log.rmf, data=comp2.med.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="50%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp2.60=levelplot(V3~log.lma*log.rmf, data=comp2.60.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="60%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp2.70=levelplot(V3~log.lma*log.rmf, data=comp2.70.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="70%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp2.80=levelplot(V3~log.lma*log.rmf, data=comp2.80.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1),  main=list(label="80%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75))
-comp2.90=levelplot(V3~log.lma*log.rmf, data=comp2.90.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="90%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="")
-comp2.high=levelplot(V3~log.lma*log.rmf, data=comp2.high.df, col.regions=diverge_hcl(50),at=seq(-3.0,5.0, 1), main=list(label="100%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="")
-grid.arrange(comp2.low,comp2.10,comp2.20,comp2.30,comp2.40,comp2.med,comp2.60,comp2.70,comp2.80,comp2.90,comp2.high, nrow=3,ncol=4)
 
-# Figure S5
+comp2.10=levelplot(V3~log.lma*log.rmf, data=comp2.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-1.8,2.5), ylim=c(-3.4,1.3))
+new.10=comp2.10 + latticeExtra::layer(panel.points(Q10.soil$log.lma, Q10.soil$log.rmf, col="black"))
+
+comp2.20=levelplot(V3~log.lma*log.rmf, data=comp2.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-1.8,3.2), ylim=c(-2.4,2.6))
+new.20=comp2.20 + latticeExtra::layer(panel.points(Q20.soil$log.lma, Q20.soil$log.rmf, col="black"))
+
+comp2.30=levelplot(V3~log.lma*log.rmf, data=comp2.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-3.6,3.1), ylim=c(-3.6,2.1))
+new.30=comp2.30 + latticeExtra::layer(panel.points(Q30.soil$log.lma, Q30.soil$log.rmf, col="black"))
+
+comp2.40=levelplot(V3~log.lma*log.rmf, data=comp2.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.0,2.5), ylim=c(-2.2,2.1))
+new.40=comp2.40 + latticeExtra::layer(panel.points(Q40.soil$log.lma, Q40.soil$log.rmf, col="black"))
+
+comp2.50=levelplot(V3~log.lma*log.rmf, data=comp2.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),xlim=c(-3.5,2.7), ylim=c(-3.0,3.4), ylab="")
+new.50=comp2.50 + latticeExtra::layer(panel.points(Q50.soil$log.lma, Q50.soil$log.rmf, col="black"))
+
+comp2.60=levelplot(V3~log.lma*log.rmf, data=comp2.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-3.2,2.6), ylim=c(-2.9,3.3))
+new.60=comp2.60 + latticeExtra::layer(panel.points(Q60.soil$log.lma, Q60.soil$log.rmf, col="black"))
+
+comp2.70=levelplot(V3~log.lma*log.rmf, data=comp2.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-2.5,3.1), ylim=c(-2.0,3.1))
+new.70=comp2.70 + latticeExtra::layer(panel.points(Q70.soil$log.lma, Q70.soil$log.rmf, col="black"))
+
+comp2.80=levelplot(V3~log.lma*log.rmf, data=comp2.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.6,2.6), ylim=c(-5.6,3.4), ylab="")
+new.80=comp2.80 + latticeExtra::layer(panel.points(Q80.soil$log.lma, Q80.soil$log.rmf, col="black"))
+
+comp2.90=levelplot(V3~log.lma*log.rmf, data=comp2.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="", xlim=c(-3.4,3.2), ylim=c(-3.5, 3.4))
+new.90=comp2.90 + latticeExtra::layer(panel.points(Q90.soil$log.lma, Q90.soil$log.rmf, col="black"))
+
+comp2.100=levelplot(V3~log.lma*log.rmf, data=comp2.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-3.0,1.5), ylim=c(-1.9,2.9))
+new.100=comp2.100 + latticeExtra::layer(panel.points(Q100.soil$log.lma, Q100.soil$log.rmf, col="black"))
+
+# Figure S11
 
 # mean leaf thickness x SSL x soil PC2
 
@@ -590,38 +773,48 @@ vec=seq(-5.4,4.0, by=0.1)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Predict new values from the fitted model with the expanded data
+
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.46)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.46 & all.data$Comp.1 < -3.52)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.52 & all.data$Comp.1 < -2.58)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.58 & all.data$Comp.1 < -1.64)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.64 & all.data$Comp.1 < -0.70)
+Q60.soil=subset(all.data, all.data$Comp.1 >= -0.70 & all.data$Comp.1 < 0.24)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 0.24 & all.data$Comp.1 < 1.18)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 1.18 & all.data$Comp.1 < 2.12)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 2.12 & all.data$Comp.1 < 3.06)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 3.06 & all.data$Comp.1 <= 4.0)
+
+
 #Expand the range of the variables in the model while holding soil PC2 constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=-5.40))
 data.10=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=-4.46))
 data.20=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=-3.52))
 data.30=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=-2.58))
 data.40=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=-1.64))
-data.med=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=-0.70))
+data.50=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=-0.70))
 data.60=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=0.24))
 data.70=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=1.18))
 data.80=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=2.12))
 data.90=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=3.06))
-data.high=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=4.0))
+data.100=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.ssl=seq(-3.3,2.9,length.out=10), Comp.2=4.0))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(thick.ssl.pc2,data.low, re.form=NA)
 p.10=predict(thick.ssl.pc2,data.10, re.form=NA)
 p.20=predict(thick.ssl.pc2,data.20, re.form=NA)
 p.30=predict(thick.ssl.pc2,data.30, re.form=NA)
 p.40=predict(thick.ssl.pc2,data.40, re.form=NA)
-p.med=predict(thick.ssl.pc2,data.med, re.form=NA)
+p.50=predict(thick.ssl.pc2,data.50, re.form=NA)
 p.60=predict(thick.ssl.pc2,data.60, re.form=NA)
 p.70=predict(thick.ssl.pc2,data.70, re.form=NA)
 p.80=predict(thick.ssl.pc2,data.80, re.form=NA)
 p.90=predict(thick.ssl.pc2,data.90, re.form=NA)
-p.high=predict(thick.ssl.pc2,data.high, re.form=NA)
+p.100=predict(thick.ssl.pc2,data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-comp2.low.df=data.low[,1:2]
-comp2.low.df[,3]=p.low
 comp2.10.df=data.10[,1:2]
 comp2.10.df[,3]=p.10
 comp2.20.df=data.20[,1:2]
@@ -630,8 +823,8 @@ comp2.30.df=data.30[,1:2]
 comp2.30.df[,3]=p.30
 comp2.40.df=data.40[,1:2]
 comp2.40.df[,3]=p.40
-comp2.med.df=data.med[,1:2]
-comp2.med.df[,3]=p.med
+comp2.50.df=data.50[,1:2]
+comp2.50.df[,3]=p.50
 comp2.60.df=data.60[,1:2]
 comp2.60.df[,3]=p.60
 comp2.70.df=data.70[,1:2]
@@ -640,25 +833,63 @@ comp2.80.df=data.80[,1:2]
 comp2.80.df[,3]=p.80
 comp2.90.df=data.90[,1:2]
 comp2.90.df[,3]=p.90
-comp2.high.df=data.high[,1:2]
-comp2.high.df[,3]=p.high
+comp2.100.df=data.100[,1:2]
+comp2.100.df[,3]=p.100
 
-# Figure S5
+# Figure S11
 
-comp2.low=levelplot(V3~log.mean.thick*log.ssl, data=comp2.low.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="0%", cex=.75), ylab=list(label="Stem Specific Length", cex=.75), xlab=list(label="Mean Leaf thickness", cex=.75))
-comp2.10=levelplot(V3~log.mean.thick*log.ssl, data=comp2.10.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.20=levelplot(V3~log.mean.thick*log.ssl, data=comp2.20.df,col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="20%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.30=levelplot(V3~log.mean.thick*log.ssl, data=comp2.30.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="30%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.40=levelplot(V3~log.mean.thick*log.ssl, data=comp2.40.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="40%", cex=.75),ylab=list(label="Stem Specific Length", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp2.med=levelplot(V3~log.mean.thick*log.ssl, data=comp2.med.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="50%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.60=levelplot(V3~log.mean.thick*log.ssl, data=comp2.60.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="60%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.70=levelplot(V3~log.mean.thick*log.ssl, data=comp2.70.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="70%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.80=levelplot(V3~log.mean.thick*log.ssl, data=comp2.80.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="80%", cex=.75),ylab=list(label="Stem Specific Length", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp2.90=levelplot(V3~log.mean.thick*log.ssl, data=comp2.90.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1),main=list(label="90%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp2.high=levelplot(V3~log.mean.thick*log.ssl, data=comp2.high.df, col.regions=diverge_hcl(50),at=seq(-3.5,3.5, 1), main=list(label="100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-grid.arrange(comp2.low,comp2.10,comp2.20,comp2.30,comp2.40,comp2.med,comp2.60,comp2.70,comp2.80,comp2.90,comp2.high, nrow=3,ncol=4)
+range(Q10.soil$log.mean.thick)
+range(Q10.soil$log.ssl)
+range(Q20.soil$log.mean.thick)
+range(Q20.soil$log.ssl)
+range(Q30.soil$log.mean.thick)
+range(Q30.soil$log.ssl)
+range(Q40.soil$log.mean.thick)
+range(Q40.soil$log.ssl)
+range(Q50.soil$log.mean.thick)
+range(Q50.soil$log.ssl)
+range(Q60.soil$log.mean.thick)
+range(Q60.soil$log.ssl)
+range(Q70.soil$log.mean.thick)
+range(Q70.soil$log.ssl)
+range(Q80.soil$log.mean.thick)
+range(Q80.soil$log.ssl)
+range(Q90.soil$log.mean.thick)
+range(Q90.soil$log.ssl)
+range(Q100.soil$log.mean.thick)
+range(Q100.soil$log.ssl)
 
-# Figure S6
+comp2.10=levelplot(V3~log.mean.thick*log.ssl, data=comp2.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Stem Specific Length", cex=.75), xlim=c(-1.6,2.1), ylim=c(-2.3,1.7))
+new.10=comp2.10 + latticeExtra::layer(panel.points(Q10.soil$log.mean.thick, Q10.soil$log.ssl, col="black"))
+
+comp2.20=levelplot(V3~log.mean.thick*log.ssl, data=comp2.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.6,2.6), ylim=c(-1.9,1.8))
+new.20=comp2.20 + latticeExtra::layer(panel.points(Q20.soil$log.mean.thick, Q20.soil$log.ssl, col="black"))
+
+comp2.30=levelplot(V3~log.mean.thick*log.ssl, data=comp2.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.8,2.8), ylim=c(-3.4,2.5))
+new.30=comp2.30 + latticeExtra::layer(panel.points(Q30.soil$log.mean.thick, Q30.soil$log.ssl, col="black"))
+
+comp2.40=levelplot(V3~log.mean.thick*log.ssl, data=comp2.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Stem Specific Length", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-1.6,2.6), ylim=c(-2.4,2.1))
+new.40=comp2.40 + latticeExtra::layer(panel.points(Q40.soil$log.mean.thick, Q40.soil$log.ssl, col="black"))
+
+comp2.50=levelplot(V3~log.mean.thick*log.ssl, data=comp2.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),xlim=c(-1.9,2.8), ylim=c(-2.9,2.5), ylab="")
+new.50=comp2.50 + latticeExtra::layer(panel.points(Q50.soil$log.mean.thick, Q50.soil$log.ssl, col="black"))
+
+comp2.60=levelplot(V3~log.mean.thick*log.ssl, data=comp2.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.8,3.0), ylim=c(-2.4,2.9))
+new.60=comp2.60 + latticeExtra::layer(panel.points(Q60.soil$log.mean.thick, Q60.soil$log.ssl, col="black"))
+
+comp2.70=levelplot(V3~log.mean.thick*log.ssl, data=comp2.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab=list(label="Stem Specific Length", cex=.75), xlim=c(-1.9,3.2), ylim=c(-2.5,2.7))
+new.70=comp2.70 + latticeExtra::layer(panel.points(Q70.soil$log.mean.thick, Q70.soil$log.ssl, col="black"))
+
+comp2.80=levelplot(V3~log.mean.thick*log.ssl, data=comp2.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-2.1,2.2), ylim=c(-3.3,2.8), ylab="")
+new.80=comp2.80 + latticeExtra::layer(panel.points(Q80.soil$log.mean.thick, Q80.soil$log.ssl, col="black"))
+
+comp2.90=levelplot(V3~log.mean.thick*log.ssl, data=comp2.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="", xlim=c(-2.2,2.2), ylim=c(-2.2, 2.5))
+new.90=comp2.90 + latticeExtra::layer(panel.points(Q90.soil$log.mean.thick, Q90.soil$log.ssl, col="black"))
+
+comp2.100=levelplot(V3~log.mean.thick*log.ssl, data=comp2.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Stem Specific Length", cex=.75), xlim=c(-1.5,2.4), ylim=c(-2.9,2.2))
+new.100=comp2.100 + latticeExtra::layer(panel.points(Q100.soil$log.mean.thick, Q100.soil$log.ssl, col="black"))
+
+# Figure S12
 
 # mean leaf thickness x LAR x soil PC2
 
@@ -670,38 +901,48 @@ vec=seq(-5.4,4.0, by=0.1)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Predict new values from the fitted model with the expanded data
+
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.46)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.46 & all.data$Comp.1 < -3.52)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.52 & all.data$Comp.1 < -2.58)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.58 & all.data$Comp.1 < -1.64)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.64 & all.data$Comp.1 < -0.70)
+Q60.soil=subset(all.data, all.data$Comp.1 >= -0.70 & all.data$Comp.1 < 0.24)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 0.24 & all.data$Comp.1 < 1.18)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 1.18 & all.data$Comp.1 < 2.12)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 2.12 & all.data$Comp.1 < 3.06)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 3.06 & all.data$Comp.1 <= 4.0)
+
+
 #Expand the range of the variables in the model while holding soil PC2 constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=-5.40))
 data.10=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=-4.46))
 data.20=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=-3.52))
 data.30=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=-2.58))
 data.40=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=-1.64))
-data.med=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=-0.70))
+data.50=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=-0.70))
 data.60=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=0.24))
 data.70=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=1.18))
 data.80=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=2.12))
 data.90=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=3.06))
-data.high=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=4.0))
+data.100=with(all.data,expand.grid(log.mean.thick=seq(-2.1,3.2,length.out=10),log.lar1=seq(-6.3,2.5,length.out=10), Comp.2=4.0))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(thick.lar1.pc2,data.low, re.form=NA)
 p.10=predict(thick.lar1.pc2,data.10, re.form=NA)
 p.20=predict(thick.lar1.pc2,data.20, re.form=NA)
 p.30=predict(thick.lar1.pc2,data.30, re.form=NA)
 p.40=predict(thick.lar1.pc2,data.40, re.form=NA)
-p.med=predict(thick.lar1.pc2,data.med, re.form=NA)
+p.50=predict(thick.lar1.pc2,data.50, re.form=NA)
 p.60=predict(thick.lar1.pc2,data.60, re.form=NA)
 p.70=predict(thick.lar1.pc2,data.70, re.form=NA)
 p.80=predict(thick.lar1.pc2,data.80, re.form=NA)
 p.90=predict(thick.lar1.pc2,data.90, re.form=NA)
-p.high=predict(thick.lar1.pc2,data.high, re.form=NA)
+p.100=predict(thick.lar1.pc2,data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-comp2.low.df=data.low[,1:2]
-comp2.low.df[,3]=p.low
 comp2.10.df=data.10[,1:2]
 comp2.10.df[,3]=p.10
 comp2.20.df=data.20[,1:2]
@@ -710,8 +951,8 @@ comp2.30.df=data.30[,1:2]
 comp2.30.df[,3]=p.30
 comp2.40.df=data.40[,1:2]
 comp2.40.df[,3]=p.40
-comp2.med.df=data.med[,1:2]
-comp2.med.df[,3]=p.med
+comp2.50.df=data.50[,1:2]
+comp2.50.df[,3]=p.50
 comp2.60.df=data.60[,1:2]
 comp2.60.df[,3]=p.60
 comp2.70.df=data.70[,1:2]
@@ -720,25 +961,63 @@ comp2.80.df=data.80[,1:2]
 comp2.80.df[,3]=p.80
 comp2.90.df=data.90[,1:2]
 comp2.90.df[,3]=p.90
-comp2.high.df=data.high[,1:2]
-comp2.high.df[,3]=p.high
+comp2.100.df=data.100[,1:2]
+comp2.100.df[,3]=p.100
 
-# Figure S6
+# Figure S12
 
-comp2.low=levelplot(V3~log.mean.thick*log.lar1, data=comp2.low.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1), main=list(label="0%", cex=.75), ylab=list(label="Leaf Area Ratio", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp2.10=levelplot(V3~log.mean.thick*log.lar1, data=comp2.10.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1), main=list(label="10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.20=levelplot(V3~log.mean.thick*log.lar1, data=comp2.20.df,col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1),  main=list(label="20%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.30=levelplot(V3~log.mean.thick*log.lar1, data=comp2.30.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1), main=list(label="30%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.40=levelplot(V3~log.mean.thick*log.lar1, data=comp2.40.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1),  main=list(label="40%", cex=.75),ylab=list(label="Leaf Area Ratio", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp2.med=levelplot(V3~log.mean.thick*log.lar1, data=comp2.med.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1), main=list(label="50%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.60=levelplot(V3~log.mean.thick*log.lar1, data=comp2.60.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1), main=list(label="60%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.70=levelplot(V3~log.mean.thick*log.lar1, data=comp2.70.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1),  main=list(label="70%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp2.80=levelplot(V3~log.mean.thick*log.lar1, data=comp2.80.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1),   main=list(label="80%", cex=.75),ylab=list(label="Leaf Area Ratio", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp2.90=levelplot(V3~log.mean.thick*log.lar1, data=comp2.90.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1), main=list(label="90%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp2.high=levelplot(V3~log.mean.thick*log.lar1, data=comp2.high.df, col.regions=diverge_hcl(50),at=seq(-5.5,3.0, 1),main=list(label="100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-grid.arrange(comp2.low,comp2.10,comp2.20,comp2.30,comp2.40,comp2.med,comp2.60,comp2.70,comp2.80,comp2.90,comp2.high, nrow=3,ncol=4)
+range(Q10.soil$log.mean.thick)
+range(Q10.soil$log.lar1)
+range(Q20.soil$log.mean.thick)
+range(Q20.soil$log.lar1)
+range(Q30.soil$log.mean.thick)
+range(Q30.soil$log.lar1)
+range(Q40.soil$log.mean.thick)
+range(Q40.soil$log.lar1)
+range(Q50.soil$log.mean.thick)
+range(Q50.soil$log.lar1)
+range(Q60.soil$log.mean.thick)
+range(Q60.soil$log.lar1)
+range(Q70.soil$log.mean.thick)
+range(Q70.soil$log.lar1)
+range(Q80.soil$log.mean.thick)
+range(Q80.soil$log.lar1)
+range(Q90.soil$log.mean.thick)
+range(Q90.soil$log.lar1)
+range(Q100.soil$log.mean.thick)
+range(Q100.soil$log.lar1)
 
-# Figure S7
+comp2.10=levelplot(V3~log.mean.thick*log.lar1, data=comp2.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Leaf Area Ratio", cex=.75), xlim=c(-1.6,2.1), ylim=c(-1.7,1.6))
+new.10=comp2.10 + latticeExtra::layer(panel.points(Q10.soil$log.mean.thick, Q10.soil$log.lar1, col="black"))
+
+comp2.20=levelplot(V3~log.mean.thick*log.lar1, data=comp2.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.6,2.6), ylim=c(-2.6,1.6))
+new.20=comp2.20 + latticeExtra::layer(panel.points(Q20.soil$log.mean.thick, Q20.soil$log.lar1, col="black"))
+
+comp2.30=levelplot(V3~log.mean.thick*log.lar1, data=comp2.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.8,2.8), ylim=c(-4.8,2.1))
+new.30=comp2.30 + latticeExtra::layer(panel.points(Q30.soil$log.mean.thick, Q30.soil$log.lar1, col="black"))
+
+comp2.40=levelplot(V3~log.mean.thick*log.lar1, data=comp2.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Leaf Area Ratio", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-1.6,2.6), ylim=c(-3.0,2.4))
+new.40=comp2.40 + latticeExtra::layer(panel.points(Q40.soil$log.mean.thick, Q40.soil$log.lar1, col="black"))
+
+comp2.50=levelplot(V3~log.mean.thick*log.lar1, data=comp2.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),xlim=c(-1.9,2.8), ylim=c(-6.5,1.9), ylab="")
+new.50=comp2.50 + latticeExtra::layer(panel.points(Q50.soil$log.mean.thick, Q50.soil$log.lar1, col="black"))
+
+comp2.60=levelplot(V3~log.mean.thick*log.lar1, data=comp2.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="", xlim=c(-1.8,3.0), ylim=c(-3.9,1.7))
+new.60=comp2.60 + latticeExtra::layer(panel.points(Q60.soil$log.mean.thick, Q60.soil$log.lar1, col="black"))
+
+comp2.70=levelplot(V3~log.mean.thick*log.lar1, data=comp2.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab=list(label="Leaf Area Ratio", cex=.75), xlim=c(-1.9,3.2), ylim=c(-3.8,1.7))
+new.70=comp2.70 + latticeExtra::layer(panel.points(Q70.soil$log.mean.thick, Q70.soil$log.lar1, col="black"))
+
+comp2.80=levelplot(V3~log.mean.thick*log.lar1, data=comp2.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-2.1,2.2), ylim=c(-5.0,2.3), ylab="")
+new.80=comp2.80 + latticeExtra::layer(panel.points(Q80.soil$log.mean.thick, Q80.soil$log.lar1, col="black"))
+
+comp2.90=levelplot(V3~log.mean.thick*log.lar1, data=comp2.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="", xlim=c(-2.2,2.2), ylim=c(-4.9, 1.9))
+new.90=comp2.90 + latticeExtra::layer(panel.points(Q90.soil$log.mean.thick, Q90.soil$log.lar1, col="black"))
+
+comp2.100=levelplot(V3~log.mean.thick*log.lar1, data=comp2.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab=list(label="Leaf Area Ratio", cex=.75), xlim=c(-1.5,2.4), ylim=c(-3.8,2.1))
+new.100=comp2.100 + latticeExtra::layer(panel.points(Q100.soil$log.mean.thick, Q100.soil$log.lar1, col="black"))
+
+# Figure S13
 
 # LAR x LMF x soil PC2
 
@@ -750,37 +1029,48 @@ vec=seq(-5.4,4.0, by=0.1)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Predict new values from the fitted model with the expanded data
+
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.46)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.46 & all.data$Comp.1 < -3.52)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.52 & all.data$Comp.1 < -2.58)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.58 & all.data$Comp.1 < -1.64)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.64 & all.data$Comp.1 < -0.70)
+Q60.soil=subset(all.data, all.data$Comp.1 >= -0.70 & all.data$Comp.1 < 0.24)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 0.24 & all.data$Comp.1 < 1.18)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 1.18 & all.data$Comp.1 < 2.12)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 2.12 & all.data$Comp.1 < 3.06)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 3.06 & all.data$Comp.1 <= 4.0)
+
+
 #Expand the range of the variables in the model while holding soil PC2 constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=-5.40))
 data.10=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=-4.46))
 data.20=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=-3.52))
 data.30=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=-2.58))
 data.40=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=-1.64))
-data.med=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=-0.70))
+data.50=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=-0.70))
 data.60=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=0.24))
 data.70=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=1.18))
 data.80=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10),Comp.2=2.12))
 data.90=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=3.06))
-data.high=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=4.0))
+data.100=with(all.data,expand.grid(log.lar1=seq(-6.3,2.5,length.out=10),log.lmf=seq(-6.0,1.7,length.out=10), Comp.2=4.0))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(lar.lmf.pc2,data.low, re.form=NA)
 p.10=predict(lar.lmf.pc2,data.10, re.form=NA)
 p.20=predict(lar.lmf.pc2,data.20, re.form=NA)
 p.30=predict(lar.lmf.pc2,data.30, re.form=NA)
 p.40=predict(lar.lmf.pc2,data.40, re.form=NA)
-p.med=predict(lar.lmf.pc2,data.med, re.form=NA)
+p.50=predict(lar.lmf.pc2,data.50, re.form=NA)
 p.60=predict(lar.lmf.pc2,data.60, re.form=NA)
 p.70=predict(lar.lmf.pc2,data.70, re.form=NA)
 p.80=predict(lar.lmf.pc2,data.80, re.form=NA)
 p.90=predict(lar.lmf.pc2,data.90, re.form=NA)
-p.high=predict(lar.lmf.pc2,data.high, re.form=NA)
+p.100=predict(lar.lmf.pc2,data.100, re.form=NA)
+
 #Put the two trait values and the predicted values into a data.frame
 
-comp2.low.df=data.low[,1:2]
-comp2.low.df[,3]=p.low
 comp2.10.df=data.10[,1:2]
 comp2.10.df[,3]=p.10
 comp2.20.df=data.20[,1:2]
@@ -789,8 +1079,8 @@ comp2.30.df=data.30[,1:2]
 comp2.30.df[,3]=p.30
 comp2.40.df=data.40[,1:2]
 comp2.40.df[,3]=p.40
-comp2.med.df=data.med[,1:2]
-comp2.med.df[,3]=p.med
+comp2.50.df=data.50[,1:2]
+comp2.50.df[,3]=p.50
 comp2.60.df=data.60[,1:2]
 comp2.60.df[,3]=p.60
 comp2.70.df=data.70[,1:2]
@@ -799,23 +1089,61 @@ comp2.80.df=data.80[,1:2]
 comp2.80.df[,3]=p.80
 comp2.90.df=data.90[,1:2]
 comp2.90.df[,3]=p.90
-comp2.high.df=data.high[,1:2]
-comp2.high.df[,3]=p.high
+comp2.100.df=data.100[,1:2]
+comp2.100.df[,3]=p.100
 
-# Figure S7
+# Figure S13
 
-comp2.low=levelplot(V3~log.lar1*log.lmf, data=comp2.low.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),  main=list(label="0%", cex=.75), ylab=list(label="Leaf Mass Fraction", cex=.75), xlab=list(label="Leaf Area Ratio", cex=.75))
-comp2.10=levelplot(V3~log.lar1*log.lmf, data=comp2.10.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1), main=list(label="10%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="")
-comp2.20=levelplot(V3~log.lar1*log.lmf, data=comp2.20.df,col.regions=diverge_hcl(50),at=seq(-5,3, 1),  main=list(label="20%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="")
-comp2.30=levelplot(V3~log.lar1*log.lmf, data=comp2.30.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),  main=list(label="30%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="")
-comp2.40=levelplot(V3~log.lar1*log.lmf, data=comp2.40.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),  main=list(label="40%", cex=.75),ylab=list(label="Leaf Mass Fraction", cex=.75), xlab=list(label="Leaf Area Ratio", cex=.75))
-comp2.med=levelplot(V3~log.lar1*log.lmf, data=comp2.med.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),  main=list(label="50%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="")
-comp2.60=levelplot(V3~log.lar1*log.lmf, data=comp2.60.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),main=list(label="60%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="")
-comp2.70=levelplot(V3~log.lar1*log.lmf, data=comp2.70.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),  main=list(label="70%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="")
-comp2.80=levelplot(V3~log.lar1*log.lmf, data=comp2.80.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),   main=list(label="80%", cex=.75),ylab=list(label="Leaf Mass Fraction", cex=.75), xlab=list(label="Leaf Area Ratio", cex=.75))
-comp2.90=levelplot(V3~log.lar1*log.lmf, data=comp2.90.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1),main=list(label="90%", cex=.75),xlab=list(label="Leaf Area Ratios", cex=.75), ylab="")
-comp2.high=levelplot(V3~log.lar1*log.lmf, data=comp2.high.df, col.regions=diverge_hcl(50),at=seq(-5,3, 1), main=list(label="100%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75), ylab="")
-grid.arrange(comp2.low,comp2.10,comp2.20,comp2.30,comp2.40,comp2.med,comp2.60,comp2.70,comp2.80,comp2.90,comp2.high, nrow=3,ncol=4)
+range(Q10.soil$log.lar1)
+range(Q10.soil$log.lmf)
+range(Q20.soil$log.lar1)
+range(Q20.soil$log.lmf)
+range(Q30.soil$log.lar1)
+range(Q30.soil$log.lmf)
+range(Q40.soil$log.lar1)
+range(Q40.soil$log.lmf)
+range(Q50.soil$log.lar1)
+range(Q50.soil$log.lmf)
+range(Q60.soil$log.lar1)
+range(Q60.soil$log.lmf)
+range(Q70.soil$log.lar1)
+range(Q70.soil$log.lmf)
+range(Q80.soil$log.lar1)
+range(Q80.soil$log.lmf)
+range(Q90.soil$log.lar1)
+range(Q90.soil$log.lmf)
+range(Q100.soil$log.lar1)
+range(Q100.soil$log.lmf)
+
+comp2.10=levelplot(V3~log.lar1*log.lmf, data=comp2.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75), ylab=list(label="Leaf Mass Fraction", cex=.75), xlim=c(-1.7,1.6), ylim=c(-1.6,1.3))
+new.10=comp2.10 + latticeExtra::layer(panel.points(Q10.soil$log.lar1, Q10.soil$log.lmf, col="black"))
+
+comp2.20=levelplot(V3~log.lar1*log.lmf, data=comp2.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="", xlim=c(-2.5,1.6), ylim=c(-2.4,1.3))
+new.20=comp2.20 + latticeExtra::layer(panel.points(Q20.soil$log.lar1, Q20.soil$log.lmf, col="black"))
+
+comp2.30=levelplot(V3~log.lar1*log.lmf, data=comp2.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="", xlim=c(-4.8,2.1), ylim=c(-4.5,1.8))
+new.30=comp2.30 + latticeExtra::layer(panel.points(Q30.soil$log.lar1, Q30.soil$log.lmf, col="black"))
+
+comp2.40=levelplot(V3~log.lar1*log.lmf, data=comp2.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Leaf Mass Fraction", cex=.75), xlab=list(label="Leaf Area Ratio", cex=.75), xlim=c(-3.0,2.4), ylim=c(-3.3,1.4))
+new.40=comp2.40 + latticeExtra::layer(panel.points(Q40.soil$log.lar1, Q40.soil$log.lmf, col="black"))
+
+comp2.50=levelplot(V3~log.lar1*log.lmf, data=comp2.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),xlim=c(-6.5,1.9), ylim=c(-6.1,1.5), ylab="")
+new.50=comp2.50 + latticeExtra::layer(panel.points(Q50.soil$log.lar1, Q50.soil$log.lmf, col="black"))
+
+comp2.60=levelplot(V3~log.lar1*log.lmf, data=comp2.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab="", xlim=c(-3.9,1.9), ylim=c(-4.2,1.8))
+new.60=comp2.60 + latticeExtra::layer(panel.points(Q60.soil$log.lar1, Q60.soil$log.lmf, col="black"))
+
+comp2.70=levelplot(V3~log.lar1*log.lmf, data=comp2.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75),ylab=list(label="Leaf Mass Fraction", cex=.75), xlim=c(-3.8,1.7), ylim=c(-4.0,1.7))
+new.70=comp2.70 + latticeExtra::layer(panel.points(Q70.soil$log.lar1, Q70.soil$log.lmf, col="black"))
+
+comp2.80=levelplot(V3~log.lar1*log.lmf, data=comp2.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Leaf Area Ratio", cex=.75), xlim=c(-5.0,2.3), ylim=c(-4.7,1.8), ylab="")
+new.80=comp2.80 + latticeExtra::layer(panel.points(Q80.soil$log.lar1, Q80.soil$log.lmf, col="black"))
+
+comp2.90=levelplot(V3~log.lar1*log.lmf, data=comp2.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75), ylab="", xlim=c(-5.0,1.9), ylim=c(-5.2, 1.6))
+new.90=comp2.90 + latticeExtra::layer(panel.points(Q90.soil$log.lar1, Q90.soil$log.lmf, col="black"))
+
+comp2.100=levelplot(V3~log.lar1*log.lmf, data=comp2.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Leaf Area Ratio", cex=.75), ylab=list(label="Leaf Mass Fraction", cex=.75), xlim=c(-3.8,2.1), ylim=c(-5.0,1.5))
+new.100=comp2.100 + latticeExtra::layer(panel.points(Q100.soil$log.lar1, Q100.soil$log.lmf, col="black"))
 
 
 # Figure S8
@@ -830,38 +1158,48 @@ vec=seq(-6.0,6.1, by=0.3)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Subset the main all.data for each soil quantile
+
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.8)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.8 & all.data$Comp.1 < -3.6)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.6 & all.data$Comp.1 < -2.4)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.4 & all.data$Comp.1 < -1.2)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.2 & all.data$Comp.1 < 0.0)
+Q60.soil=subset(all.data, all.data$Comp.1 >= 0.0 & all.data$Comp.1 < 1.2)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 1.2 & all.data$Comp.1 < 2.4)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 2.4 & all.data$Comp.1 < 3.6)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 3.6 & all.data$Comp.1 < 4.8)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 4.8 & all.data$Comp.1 <= 6.1)
+
+
 # Expand the range of the variables in the model while holding soil PC1 constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-6.0))
 data.10=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-4.8))
 data.20=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-3.6))
 data.30=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-2.4))
 data.40=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=-1.2))
-data.med=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=0.0))
+data.50=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=0.0))
 data.60=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=1.2))
 data.70=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=2.4))
 data.80=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=3.6))
 data.90=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=4.8))
-data.high=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=6.1))
+data.100=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.rmf=seq(-5.5,3.4,length.out=10), Comp.1=6.1))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(lma.rmf.pc1,data.low, re.form=NA)
 p.10=predict(lma.rmf.pc1,data.10, re.form=NA)
 p.20=predict(lma.rmf.pc1,data.20, re.form=NA)
 p.30=predict(lma.rmf.pc1,data.30, re.form=NA)
 p.40=predict(lma.rmf.pc1,data.40, re.form=NA)
-p.med=predict(lma.rmf.pc1,data.med, re.form=NA)
+p.50=predict(lma.rmf.pc1,data.50, re.form=NA)
 p.60=predict(lma.rmf.pc1,data.60, re.form=NA)
 p.70=predict(lma.rmf.pc1,data.70, re.form=NA)
 p.80=predict(lma.rmf.pc1,data.80, re.form=NA)
 p.90=predict(lma.rmf.pc1,data.90, re.form=NA)
-p.high=predict(lma.rmf.pc1,data.high, re.form=NA)
+p.100=predict(lma.rmf.pc1,data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-comp1.low.df=data.low[,1:2]
-comp1.low.df[,3]=p.low
 comp1.10.df=data.10[,1:2]
 comp1.10.df[,3]=p.10
 comp1.20.df=data.20[,1:2]
@@ -870,8 +1208,8 @@ comp1.30.df=data.30[,1:2]
 comp1.30.df[,3]=p.30
 comp1.40.df=data.40[,1:2]
 comp1.40.df[,3]=p.40
-comp1.med.df=data.med[,1:2]
-comp1.med.df[,3]=p.med
+comp1.50.df=data.50[,1:2]
+comp1.50.df[,3]=p.50
 comp1.60.df=data.60[,1:2]
 comp1.60.df[,3]=p.60
 comp1.70.df=data.70[,1:2]
@@ -880,22 +1218,59 @@ comp1.80.df=data.80[,1:2]
 comp1.80.df[,3]=p.80
 comp1.90.df=data.90[,1:2]
 comp1.90.df[,3]=p.90
-comp1.high.df=data.high[,1:2]
-comp1.high.df[,3]=p.high
+comp1.100.df=data.100[,1:2]
+comp1.100.df[,3]=p.100
 
+range(Q10.soil$log.lma)
+range(Q10.soil$log.rmf)
+range(Q20.soil$log.lma)
+range(Q20.soil$log.rmf)
+range(Q30.soil$log.lma)
+range(Q30.soil$log.rmf)
+range(Q40.soil$log.lma)
+range(Q40.soil$log.rmf)
+range(Q50.soil$log.lma)
+range(Q50.soil$log.rmf)
+range(Q60.soil$log.lma)
+range(Q60.soil$log.rmf)
+range(Q70.soil$log.lma)
+range(Q70.soil$log.rmf)
+range(Q80.soil$log.lma)
+range(Q80.soil$log.rmf)
+range(Q90.soil$log.lma)
+range(Q90.soil$log.rmf)
+range(Q100.soil$log.lma)
+range(Q100.soil$log.rmf)
 
-comp1.low=levelplot(V3~log.lma*log.rmf, data=comp1.low.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="0%", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75))
-comp1.10=levelplot(V3~log.lma*log.rmf, data=comp1.10.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1),main=list(label="10%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="")
-comp1.20=levelplot(V3~log.lma*log.rmf, data=comp1.20.df,col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="20%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp1.30=levelplot(V3~log.lma*log.rmf, data=comp1.30.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="30%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp1.40=levelplot(V3~log.lma*log.rmf, data=comp1.40.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="40%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75))
-comp1.med=levelplot(V3~log.lma*log.rmf, data=comp1.med.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1),main=list(label="50%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp1.60=levelplot(V3~log.lma*log.rmf, data=comp1.60.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="60%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp1.70=levelplot(V3~log.lma*log.rmf, data=comp1.70.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="70%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="")
-comp1.80=levelplot(V3~log.lma*log.rmf, data=comp1.80.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="80%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75))
-comp1.90=levelplot(V3~log.lma*log.rmf, data=comp1.90.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="90%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="")
-comp1.high=levelplot(V3~log.lma*log.rmf, data=comp1.high.df, col.regions=diverge_hcl(50),at=seq(-3.5,5.5, 1), main=list(label="100%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="")
-grid.arrange(comp1.low,comp1.10,comp1.20,comp1.30,comp1.40,comp1.med,comp1.60,comp1.70,comp1.80,comp1.90,comp1.high, nrow=3,ncol=4)
+comp1.10=levelplot(V3~log.lma*log.rmf, data=comp1.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-1.8,1.8), ylim=c(-3.4,1.3))
+new.10=comp1.10 + latticeExtra::layer(panel.points(Q10.soil$log.lma, Q10.soil$log.rmf, col="black"))
+
+comp1.20=levelplot(V3~log.lma*log.rmf, data=comp1.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-1.8,3.2), ylim=c(-2.4,2.6))
+new.20=comp1.20 + latticeExtra::layer(panel.points(Q20.soil$log.lma, Q20.soil$log.rmf, col="black"))
+
+comp1.30=levelplot(V3~log.lma*log.rmf, data=comp1.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-3.6,3.1), ylim=c(-3.3,2.2))
+new.30=comp1.30 + latticeExtra::layer(panel.points(Q30.soil$log.lma, Q30.soil$log.rmf, col="black"))
+
+comp1.40=levelplot(V3~log.lma*log.rmf, data=comp1.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.0,2.6), ylim=c(-2.6,2.1))
+new.40=comp1.40 + latticeExtra::layer(panel.points(Q40.soil$log.lma, Q40.soil$log.rmf, col="black"))
+
+comp1.50=levelplot(V3~log.lma*log.rmf, data=comp1.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),xlim=c(-3.5,2.7), ylim=c(-3.0,3.3), ylab="")
+new.50=comp1.50 + latticeExtra::layer(panel.points(Q50.soil$log.lma, Q50.soil$log.rmf, col="black"))
+
+comp1.60=levelplot(V3~log.lma*log.rmf, data=comp1.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-3.2,3.1), ylim=c(-2.4,3.3))
+new.60=comp1.60 + latticeExtra::layer(panel.points(Q60.soil$log.lma, Q60.soil$log.rmf, col="black"))
+
+comp1.70=levelplot(V3~log.lma*log.rmf, data=comp1.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-3.6,2.6), ylim=c(-5.6,3.4))
+new.70=comp1.70 + latticeExtra::layer(panel.points(Q70.soil$log.lma, Q70.soil$log.rmf, col="black"))
+
+comp1.80=levelplot(V3~log.lma*log.rmf, data=comp1.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.4,3.2), ylim=c(-3.5,3.4), ylab="")
+new.80=comp1.80 + latticeExtra::layer(panel.points(Q80.soil$log.lma, Q80.soil$log.rmf, col="black"))
+
+comp1.90=levelplot(V3~log.lma*log.rmf, data=comp1.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="", xlim=c(-3.4,1.7), ylim=c(-1.6,2.9))
+new.90=comp1.90 + latticeExtra::layer(panel.points(Q90.soil$log.lma, Q90.soil$log.rmf, col="black"))
+
+comp1.100=levelplot(V3~log.lma*log.rmf, data=comp1.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlim=c(-2.9,1.5), ylim=c(-2.1,2.8))
+new.100=comp1.100 + latticeExtra::layer(panel.points(Q100.soil$log.lma, Q100.soil$log.rmf, col="black"))
 
 
 # Figure S9
@@ -910,38 +1285,47 @@ vec=seq(-6.0,6.1, by=0.3)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Subset the main all.data for each soil quantile
+
+Q10.soil=subset(all.data, all.data$Comp.1 < -4.8)
+Q20.soil=subset(all.data, all.data$Comp.1 >= -4.8 & all.data$Comp.1 < -3.6)
+Q30.soil=subset(all.data, all.data$Comp.1 >= -3.6 & all.data$Comp.1 < -2.4)
+Q40.soil=subset(all.data, all.data$Comp.1 >= -2.4 & all.data$Comp.1 < -1.2)
+Q50.soil=subset(all.data, all.data$Comp.1 >= -1.2 & all.data$Comp.1 < 0.0)
+Q60.soil=subset(all.data, all.data$Comp.1 >= 0.0 & all.data$Comp.1 < 1.2)
+Q70.soil=subset(all.data, all.data$Comp.1 >= 1.2 & all.data$Comp.1 < 2.4)
+Q80.soil=subset(all.data, all.data$Comp.1 >= 2.4 & all.data$Comp.1 < 3.6)
+Q90.soil=subset(all.data, all.data$Comp.1 >= 3.6 & all.data$Comp.1 < 4.8)
+Q100.soil=subset(all.data, all.data$Comp.1 >= 4.8 & all.data$Comp.1 <= 6.1)
+
 # Expand the range of the variables in the model while holding soil PC1 constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=-6.0))
 data.10=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=-4.8))
 data.20=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=-3.6))
 data.30=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=-2.4))
 data.40=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=-1.2))
-data.med=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=0.0))
+data.50=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=0.0))
 data.60=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=1.2))
 data.70=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=2.4))
 data.80=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=3.6))
 data.90=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=4.8))
-data.high=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=6.1))
+data.100=with(all.data,expand.grid(log.lma=seq(-3.5,3.2,length.out=10),log.mean.thick=seq(-2.1,3.2,length.out=10), Comp.1=6.1))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(lma.mean.thick.pc1,data.low, re.form=NA)
 p.10=predict(lma.mean.thick.pc1,data.10, re.form=NA)
 p.20=predict(lma.mean.thick.pc1,data.20, re.form=NA)
 p.30=predict(lma.mean.thick.pc1,data.30, re.form=NA)
 p.40=predict(lma.mean.thick.pc1,data.40, re.form=NA)
-p.med=predict(lma.mean.thick.pc1,data.med, re.form=NA)
+p.50=predict(lma.mean.thick.pc1,data.50, re.form=NA)
 p.60=predict(lma.mean.thick.pc1,data.60, re.form=NA)
 p.70=predict(lma.mean.thick.pc1,data.70, re.form=NA)
 p.80=predict(lma.mean.thick.pc1,data.80, re.form=NA)
 p.90=predict(lma.mean.thick.pc1,data.90, re.form=NA)
-p.high=predict(lma.mean.thick.pc1,data.high, re.form=NA)
+p.100=predict(lma.mean.thick.pc1,data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-comp1.low.df=data.low[,1:2]
-comp1.low.df[,3]=p.low
 comp1.10.df=data.10[,1:2]
 comp1.10.df[,3]=p.10
 comp1.20.df=data.20[,1:2]
@@ -950,8 +1334,8 @@ comp1.30.df=data.30[,1:2]
 comp1.30.df[,3]=p.30
 comp1.40.df=data.40[,1:2]
 comp1.40.df[,3]=p.40
-comp1.med.df=data.med[,1:2]
-comp1.med.df[,3]=p.med
+comp1.50.df=data.50[,1:2]
+comp1.50.df[,3]=p.50
 comp1.60.df=data.60[,1:2]
 comp1.60.df[,3]=p.60
 comp1.70.df=data.70[,1:2]
@@ -960,25 +1344,62 @@ comp1.80.df=data.80[,1:2]
 comp1.80.df[,3]=p.80
 comp1.90.df=data.90[,1:2]
 comp1.90.df[,3]=p.90
-comp1.high.df=data.high[,1:2]
-comp1.high.df[,3]=p.high
+comp1.100.df=data.100[,1:2]
+comp1.100.df[,3]=p.100
+
+range(Q10.soil$log.lma)
+range(Q10.soil$log.mean.thick)
+range(Q20.soil$log.lma)
+range(Q20.soil$log.mean.thick)
+range(Q30.soil$log.lma)
+range(Q30.soil$log.mean.thick)
+range(Q40.soil$log.lma)
+range(Q40.soil$log.mean.thick)
+range(Q50.soil$log.lma)
+range(Q50.soil$log.mean.thick)
+range(Q60.soil$log.lma)
+range(Q60.soil$log.mean.thick)
+range(Q70.soil$log.lma)
+range(Q70.soil$log.mean.thick)
+range(Q80.soil$log.lma)
+range(Q80.soil$log.mean.thick)
+range(Q90.soil$log.lma)
+range(Q90.soil$log.mean.thick)
+range(Q100.soil$log.lma)
+range(Q100.soil$log.mean.thick)
+
+comp1.10=levelplot(V3~log.lma*log.mean.thick, data=comp1.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-1.8,1.8), ylim=c(-1.6,1.3))
+new.10=comp1.10 + latticeExtra::layer(panel.points(Q10.soil$log.lma, Q10.soil$log.mean.thick, col="black"))
+
+comp1.20=levelplot(V3~log.lma*log.mean.thick, data=comp1.20.df, col.regions=diverge_hcl(50), main=list(label="10%-19%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-1.8,3.2), ylim=c(-1.6,2.6))
+new.20=comp1.20 + latticeExtra::layer(panel.points(Q20.soil$log.lma, Q20.soil$log.mean.thick, col="black"))
+
+comp1.30=levelplot(V3~log.lma*log.mean.thick, data=comp1.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-3.6,3.1), ylim=c(-1.8,2.8))
+new.30=comp1.30 + latticeExtra::layer(panel.points(Q30.soil$log.lma, Q30.soil$log.mean.thick, col="black"))
+
+comp1.40=levelplot(V3~log.lma*log.mean.thick, data=comp1.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Mean Leaf Thickness", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.0,2.6), ylim=c(-1.9,2.6))
+new.40=comp1.40 + latticeExtra::layer(panel.points(Q40.soil$log.lma, Q40.soil$log.mean.thick, col="black"))
+
+comp1.50=levelplot(V3~log.lma*log.mean.thick, data=comp1.50.df, col.regions=diverge_hcl(50),main=list(label="40%-49%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),xlim=c(-3.5,2.7), ylim=c(-1.9,2.8), ylab="")
+new.50=comp1.50 + latticeExtra::layer(panel.points(Q50.soil$log.lma, Q50.soil$log.mean.thick, col="black"))
+
+comp1.60=levelplot(V3~log.lma*log.mean.thick, data=comp1.60.df, col.regions=diverge_hcl(50),main=list(label="50%-59%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab="", xlim=c(-3.2,3.1), ylim=c(-1.9,3.2))
+new.60=comp1.60 + latticeExtra::layer(panel.points(Q60.soil$log.lma, Q60.soil$log.mean.thick, col="black"))
+
+comp1.70=levelplot(V3~log.lma*log.mean.thick, data=comp1.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75),ylab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-3.6,2.6), ylim=c(-2.1,2.2))
+new.70=comp1.70 + latticeExtra::layer(panel.points(Q70.soil$log.lma, Q70.soil$log.mean.thick, col="black"))
+
+comp1.80=levelplot(V3~log.lma*log.mean.thick, data=comp1.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75), xlab=list(label="Leaf Mass per Area", cex=.75), xlim=c(-3.4,3.2), ylim=c(-2.2,2.4), ylab="")
+new.80=comp1.80 + latticeExtra::layer(panel.points(Q80.soil$log.lma, Q80.soil$log.mean.thick, col="black"))
+
+comp1.90=levelplot(V3~log.lma*log.mean.thick, data=comp1.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab="", xlim=c(-3.4,1.7), ylim=c(-1.5,2.2))
+new.90=comp1.90 + latticeExtra::layer(panel.points(Q90.soil$log.lma, Q90.soil$log.mean.thick, col="black"))
+
+comp1.100=levelplot(V3~log.lma*log.mean.thick, data=comp1.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75),xlab=list(label="Leaf Mass per Area", cex=.75), ylab=list(label="Mean Leaf Thickness", cex=.75), xlim=c(-3.0,1.5), ylim=c(-1.5,2.7))
+new.100=comp1.100 + latticeExtra::layer(panel.points(Q100.soil$log.lma, Q100.soil$log.mean.thick, col="black"))
 
 
-comp1.low=levelplot(V3~log.mean.thick*log.rmf, data=comp1.low.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="0%", cex=.75), ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.10=levelplot(V3~log.mean.thick*log.rmf, data=comp1.10.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1),main=list(label="10%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp1.20=levelplot(V3~log.mean.thick*log.rmf, data=comp1.20.df,col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="20%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.30=levelplot(V3~log.mean.thick*log.rmf, data=comp1.30.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="30%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.40=levelplot(V3~log.mean.thick*log.rmf, data=comp1.40.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="40%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.med=levelplot(V3~log.mean.thick*log.rmf, data=comp1.med.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1),main=list(label="50%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.60=levelplot(V3~log.mean.thick*log.rmf, data=comp1.60.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="60%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.70=levelplot(V3~log.mean.thick*log.rmf, data=comp1.70.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="70%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75),ylab="")
-comp1.80=levelplot(V3~log.mean.thick*log.rmf, data=comp1.80.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="80%", cex=.75),ylab=list(label="Root Mass Fraction", cex=.75), xlab=list(label="Mean Leaf Thickness", cex=.75))
-comp1.90=levelplot(V3~log.mean.thick*log.rmf, data=comp1.90.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="90%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-comp1.high=levelplot(V3~log.mean.thick*log.rmf, data=comp1.high.df, col.regions=diverge_hcl(50),at=seq(-4.5,4.5, 1), main=list(label="100%", cex=.75),xlab=list(label="Mean Leaf Thickness", cex=.75), ylab="")
-grid.arrange(comp1.low,comp1.10,comp1.20,comp1.30,comp1.40,comp1.med,comp1.60,comp1.70,comp1.80,comp1.90,comp1.high, nrow=3,ncol=4)
-
-
-# Figure S10
+# Figure S5
 
 # SSL x SMF x Light
 
@@ -990,38 +1411,48 @@ vec=seq(-2.6,3.0, by=0.1)
 
 quantile(vec, probs=seq(0,1,0.1))
 
+# Subset the main all.data for each light quantile
+
+Q10.light=subset(all.data, all.data$log.light < -2.04)
+Q20.light=subset(all.data, all.data$log.light >= -2.04 & all.data$log.light < -1.48)
+Q30.light=subset(all.data, all.data$log.light >= -1.48 & all.data$log.light < -0.92)
+Q40.light=subset(all.data, all.data$log.light >= -0.92 & all.data$log.light < -0.36)
+Q50.light=subset(all.data, all.data$log.light >= -0.36 & all.data$log.light < 0.20)
+Q60.light=subset(all.data, all.data$log.light >= 0.20 & all.data$log.light < 0.76)
+Q70.light=subset(all.data, all.data$log.light >= 0.76 & all.data$log.light < 1.32)
+Q80.light=subset(all.data, all.data$log.light >= 1.32 & all.data$log.light < 1.88)
+Q90.light=subset(all.data, all.data$log.light >= 1.88 & all.data$log.light < 2.44)
+Q100.light=subset(all.data, all.data$log.light >= 2.44 & all.data$log.light <= 3.00)
+
+
 # Expand the range of the variables in the model while holding light constant at each 10% of its range
 
-data.low=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=-2.6))
 data.10=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=-2.04))
 data.20=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=-1.48))
 data.30=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=-0.92))
 data.40=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=-0.36))
-data.med=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=0.20))
+data.50=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=0.20))
 data.60=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=0.76))
 data.70=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=1.32))
 data.80=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=1.88))
 data.90=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=2.44))
-data.high=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=3.0))
+data.100=with(all.data,expand.grid(log.ssl=seq(-3.3,2.9,length.out=10),log.smf=seq(-6.5,3.0,length.out=10),log.light=3.0))
 
 # Predict new values from the fitted model with the expanded data
 
-p.low=predict(ssl.smf.light,data.low, re.form=NA)
 p.10=predict(ssl.smf.light,data.10, re.form=NA)
 p.20=predict(ssl.smf.light,data.20, re.form=NA)
 p.30=predict(ssl.smf.light,data.30, re.form=NA)
-p.40=predict(ssl.smf.light,data.40, re.form=NA)
-p.med=predict(ssl.smf.light,data.med, re.form=NA)
+p.50=predict(ssl.smf.light,data.40, re.form=NA)
+p.med=predict(ssl.smf.light,data.50, re.form=NA)
 p.60=predict(ssl.smf.light,data.60, re.form=NA)
 p.70=predict(ssl.smf.light,data.70, re.form=NA)
 p.80=predict(ssl.smf.light,data.80, re.form=NA)
 p.90=predict(ssl.smf.light,data.90, re.form=NA)
-p.high=predict(ssl.smf.light,data.high, re.form=NA)
+p.100=predict(ssl.smf.light,data.100, re.form=NA)
 
 # Put the two trait values and the predicted values into a data.frame
 
-light.low.df=data.low[,1:2]
-light.low.df[,3]=p.low
 light.10.df=data.10[,1:2]
 light.10.df[,3]=p.10
 light.20.df=data.20[,1:2]
@@ -1030,8 +1461,8 @@ light.30.df=data.30[,1:2]
 light.30.df[,3]=p.30
 light.40.df=data.40[,1:2]
 light.40.df[,3]=p.40
-light.med.df=data.med[,1:2]
-light.med.df[,3]=p.med
+light.50.df=data.50[,1:2]
+light.50.df[,3]=p.50
 light.60.df=data.60[,1:2]
 light.60.df[,3]=p.60
 light.70.df=data.70[,1:2]
@@ -1040,21 +1471,59 @@ light.80.df=data.80[,1:2]
 light.80.df[,3]=p.80
 light.90.df=data.90[,1:2]
 light.90.df[,3]=p.90
-light.high.df=data.high[,1:2]
-light.high.df[,3]=p.high
+light.100.df=data.100[,1:2]
+light.100.df[,3]=p.100
 
-light.low=levelplot(V3~log.ssl*log.smf, data=light.low.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="0%", cex=.75), ylab=list(label="Stem Mass Fraction", cex=.75),xlab=list(label="Stem Specific Length", cex=.75))
-light.10=levelplot(V3~log.ssl*log.smf, data=light.10.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="10%", cex=.75), ylab="",xlab=list(label="Stem Specific Length", cex=.75))
-light.20=levelplot(V3~log.ssl*log.smf, data=light.20.df,col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="20%", cex=.75), ylab="",xlab=list(label="Stem Specific Length", cex=.75))
-light.30=levelplot(V3~log.ssl*log.smf, data=light.30.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="30%", cex=.75),ylab="",xlab=list(label="Stem Specific Length", cex=.75))
-light.40=levelplot(V3~log.ssl*log.smf, data=light.40.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="40%", cex=.75),ylab=list(label="Stem Mass Fraction", cex=.75),xlab=list(label="Stem Specific Length", cex=.75))
-light.med=levelplot(V3~log.ssl*log.smf, data=light.med.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="50%", cex=.75),ylab="",xlab=list(label="Stem Specific Length", cex=.75))
-light.60=levelplot(V3~log.ssl*log.smf, data=light.60.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="60%", cex=.75),ylab="",xlab=list(label="Stem Specific Length", cex=.75))
-light.70=levelplot(V3~log.ssl*log.smf, data=light.70.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="70%", cex=.75),ylab="",xlab=list(label="Stem Specific Length", cex=.75))
-light.80=levelplot(V3~log.ssl*log.smf, data=light.80.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="80%", cex=.75),ylab=list(label="Stem Mass Fraction",cex=.75), xlab=list(label="Stem Specific Length", cex=.75))
-light.90=levelplot(V3~log.ssl*log.smf, data=light.90.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="90%", cex=.75), xlab=list(label="Stem Specific Length", cex=.75),ylab="")
-light.high=levelplot(V3~log.ssl*log.smf, data=light.high.df, col.regions=diverge_hcl(50),at=seq(-3,5, 1), main=list(label="100%", cex=.75), xlab=list(label="Stem Specific Length", cex=.75),ylab="")
-grid.arrange(light.low,light.10,light.20,light.30,light.40,light.med,light.60,light.70,light.80,light.90,light.high, nrow=3,ncol=4)
+range(Q10.light$log.ssl)
+range(Q10.light$log.smf)
+range(Q20.light$log.ssl)
+range(Q20.light$log.smf)
+range(Q30.light$log.ssl)
+range(Q30.light$log.smf)
+range(Q40.light$log.ssl)
+range(Q40.light$log.smf)
+range(Q50.light$log.ssl)
+range(Q50.light$log.smf)
+range(Q60.light$log.ssl)
+range(Q60.light$log.smf)
+range(Q70.light$log.ssl)
+range(Q70.light$log.smf)
+range(Q80.light$log.ssl)
+range(Q80.light$log.smf)
+range(Q90.light$log.ssl)
+range(Q90.light$log.smf)
+range(Q100.light$log.ssl)
+range(Q100.light$log.smf)
+
+light.10=levelplot(V3~log.ssl*log.smf, data=light.10.df, col.regions=diverge_hcl(50),main=list(label="< 10%", cex=.75), ylab=list(label="Stem Mass Fraction", cex=.75) ,xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-3.2,1.7), ylim=c(-3.4, 2.9))
+new.10=light.10 + latticeExtra::layer(panel.points(Q10.light$log.ssl, Q10.light$log.smf, col="black"))
+
+light.20=levelplot(V3~log.ssl*log.smf, data=light.20.df,col.regions=diverge_hcl(50),main=list(label="10%-19%", cex=.75), ylab="",xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-2.3,1.7), ylim=c(-4.8, 1.8))
+new.20=light.20 + latticeExtra::layer(panel.points(Q20.light$log.ssl, Q20.light$log.smf, col="black"))
+
+light.30=levelplot(V3~log.ssl*log.smf, data=light.30.df, col.regions=diverge_hcl(50), main=list(label="20%-29%", cex=.75),ylab="",xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-3.0,2.4), ylim=c(-6.6, 2.3))
+new.30=light.30 + latticeExtra::layer(panel.points(Q30.light$log.ssl, Q30.light$log.smf, col="black"))
+
+light.40=levelplot(V3~log.ssl*log.smf, data=light.40.df, col.regions=diverge_hcl(50), main=list(label="30%-39%", cex=.75),ylab=list(label="Stem Mass Fraction", cex=.75),xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-2.2,2.8), ylim=c(-6.1, 2.3))
+new.40=light.40 + latticeExtra::layer(panel.points(Q40.light$log.ssl, Q40.light$log.smf, col="black"))
+
+light.50=levelplot(V3~log.ssl*log.smf, data=light.50.df, col.regions=diverge_hcl(50), main=list(label="40%-49%", cex=.75),ylab="",xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-3.3,2.9), ylim=c(-4.7, 2.1))
+new.50=light.50 + latticeExtra::layer(panel.points(Q50.light$log.ssl, Q50.light$log.smf, col="black"))
+
+light.60=levelplot(V3~log.ssl*log.smf, data=light.60.df, col.regions=diverge_hcl(50), main=list(label="50%-59%", cex=.75),ylab="",xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-2.4, 2.7), ylim=c(-6.5, 3.0))
+new.60=light.60 + latticeExtra::layer(panel.points(Q60.light$log.ssl, Q60.light$log.smf, col="black"))
+
+light.70=levelplot(V3~log.ssl*log.smf, data=light.70.df, col.regions=diverge_hcl(50), main=list(label="60%-69%", cex=.75),ylab=list(label="Stem Mass Fraction", cex=.75), xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-3.4, 2.9), ylim=c(-3.0, 2.3))
+new.70=light.70 + latticeExtra::layer(panel.points(Q70.light$log.ssl, Q70.light$log.smf, col="black"))
+
+light.80=levelplot(V3~log.ssl*log.smf, data=light.80.df, col.regions=diverge_hcl(50), main=list(label="70%-79%", cex=.75),ylab="", xlab=list(label="Stem Specific Length", cex=.75), xlim=c(-2.4, 2.9), ylim=c(-2.9, 1.8))
+new.80=light.80 + latticeExtra::layer(panel.points(Q80.light$log.ssl, Q80.light$log.smf, col="black"))
+
+light.90=levelplot(V3~log.ssl*log.smf, data=light.90.df, col.regions=diverge_hcl(50), main=list(label="80%-89%", cex=.75), xlab=list(label="Stem Specific Length", cex=.75),ylab="", xlim=c(-1.6, 1.9), ylim=c(-1.9, 1.4))
+new.90=light.90 + latticeExtra::layer(panel.points(Q90.light$log.ssl, Q90.light$log.smf, col="black"))
+
+light.100=levelplot(V3~log.ssl*log.smf, data=light.100.df, col.regions=diverge_hcl(50), main=list(label="90%-100%", cex=.75), xlab=list(label="Stem Specific Length", cex=.75), ylab=list(label="Stem Mass Fraction", cex=.75), xlim=c(-1.0, 1.8), ylim=c(0.5, 1.9))
+new.100=light.100 + latticeExtra::layer(panel.points(Q100.light$log.ssl, Q100.light$log.smf, col="black"))
 
 
 # 3-way models without species as a random effect
