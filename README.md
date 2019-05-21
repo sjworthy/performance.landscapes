@@ -1,6 +1,6 @@
 # Alternative designs and tropical tree seedling growth performance landscapes
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2253830.svg)](https://doi.org/10.5281/zenodo.2253830)
+[![DOI](https://zenodo.org/badge/138330655.svg)](https://zenodo.org/badge/latestdoi/138330655)
 
 
 # License
