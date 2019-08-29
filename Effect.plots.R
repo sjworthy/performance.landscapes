@@ -55,12 +55,25 @@ abline(-0.2628303,0.017969, col="blue", lwd=4)
 legend("topright", legend=c("Light","High", "Low"),
 col=c("NA","black", "blue"), lty=1, lwd=4)
 
-dotchart(lma.light[2:5,2], labels=lma.light[2:5,7], xlim=c(-.15,.2))
+xtick=seq(-3,3,1)
+xlabels=c("0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-3,3,1)
+ylabels=c("0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.15)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.15)
+abline(0.2514939,-0.107117, col="black", lwd=4)
+abline(-0.2628303,0.017969, col="blue", lwd=4)
+legend("topright", legend=c("Light","High", "Low"),
+col=c("NA","black", "blue"), lty=1, lwd=4)
+
+dotchart(lma.light[2:5,2], labels=lma.light[2:5,7], xlim=c(-.15,.2), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(lma.light[2,4], lma.light[2,6]), y=c(1,1))
-lines(x=c(lma.light[3,4], lma.light[3,6]), y=c(2,2))
-lines(x=c(lma.light[4,4], lma.light[4,6]), y=c(3,3))
-lines(x=c(lma.light[5,4], lma.light[5,6]), y=c(4,4))
+lines(x=c(lma.light[2,4], lma.light[2,6]), y=c(1,1), lwd=2)
+lines(x=c(lma.light[3,4], lma.light[3,6]), y=c(2,2), lwd=2)
+lines(x=c(lma.light[4,4], lma.light[4,6]), y=c(3,3), lwd=2)
+lines(x=c(lma.light[5,4], lma.light[5,6]), y=c(4,4), lwd=2)
 points(x=lma.light[3,2], y=2, pch=19)
 points(x=lma.light[4,2], y=3, pch=19)
 
@@ -80,18 +93,28 @@ rmf.light.Low=rmf.light[1,2]+rmf.light[3,2]*-2.69
 -2.630887
 
 #Plots
-plot(final.data$log.rmf, final.data$log.rgr, type="n", xlab="Root Mass Fraction", ylab="Relative Growth Rate", ylim=c(-3,3))
+
+xtick=seq(-5,3,1)
+xlabels=c("0.01","0.02", "0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-3,3,1)
+ylabels=c("0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+
+
+plot(final.data$log.rmf, final.data$log.rgr, type="n", xlab="Root Mass Fraction", ylab="Relative Growth Rate", ylim=c(-3,3), xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.15)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.15)
 abline(-2.09879,-0.3265209, col="black", lwd=4)
 abline(-2.630887,0.0298893, col="blue", lwd=4)
 legend("topright", legend=c("Light","High", "Low"),
 col=c("NA","black", "blue"), lty=1, lwd=4)
 
-dotchart(rmf.light[2:5,2], labels=rmf.light[2:5,7], xlim=c(-.2,.2))
+
+dotchart(rmf.light[2:5,2], labels=rmf.light[2:5,7], xlim=c(-.2,.2), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(rmf.light[2,4], rmf.light[2,6]), y=c(1,1))
-lines(x=c(rmf.light[3,4], rmf.light[3,6]), y=c(2,2))
-lines(x=c(rmf.light[4,4], rmf.light[4,6]), y=c(3,3))
-lines(x=c(rmf.light[5,4], rmf.light[5,6]), y=c(4,4))
+lines(x=c(rmf.light[2,4], rmf.light[2,6]), y=c(1,1), lwd=2)
+lines(x=c(rmf.light[3,4], rmf.light[3,6]), y=c(2,2), lwd=2)
+lines(x=c(rmf.light[4,4], rmf.light[4,6]), y=c(3,3), lwd=2)
+lines(x=c(rmf.light[5,4], rmf.light[5,6]), y=c(4,4), lwd=2)
 points(x=rmf.light[2,2], y=1, pch=19)
 points(x=rmf.light[3,2], y=2, pch=19)
 points(x=rmf.light[4,2], y=3, pch=19)
@@ -126,7 +149,15 @@ lma.rmf.light.LH=lma.rmf.light[1,2]+lma.rmf.light[4,2]*-5.53+lma.rmf.light[2,2]*
 2.521027
 
 # Plot
-plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+
+xtick=seq(-3,3,1)
+xlabels=c("0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.15)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.15)
 abline(-0.2655351,0.4429909, col="black", lwd=4)
 abline(2.521027,-1.103356, col="blue", lwd=4)
 abline(0.2403631,0.6726187, col="coral", lwd=4)
@@ -134,22 +165,23 @@ abline(0.2158185,-0.4383616, col="forest green", lwd=4)
 legend("topright", legend=c("RMF  Light","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
+
 coef.vect=lma.rmf.light[,2]
 lower.vect=lma.rmf.light[,4]
 upper.vect=lma.rmf.light[,6]
 long.names=lma.rmf.light[,7]
 
 
-dotchart(lma.rmf.light[2:9,2], labels=lma.rmf.light[2:9,7], xlim=c(-.2,.2))
+dotchart(lma.rmf.light[2:9,2], labels=lma.rmf.light[2:9,7], xlim=c(-.2,.2), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(lma.rmf.light[2,4], lma.rmf.light[2,6]), y=c(1,1))
-lines(x=c(lma.rmf.light[3,4], lma.rmf.light[3,6]), y=c(2,2))
-lines(x=c(lma.rmf.light[4,4], lma.rmf.light[4,6]), y=c(3,3))
-lines(x=c(lma.rmf.light[5,4], lma.rmf.light[5,6]), y=c(4,4))
-lines(x=c(lma.rmf.light[6,4], lma.rmf.light[6,6]), y=c(5,5))
-lines(x=c(lma.rmf.light[7,4], lma.rmf.light[7,6]), y=c(6,6))
-lines(x=c(lma.rmf.light[8,4], lma.rmf.light[8,6]), y=c(7,7))
-lines(x=c(lma.rmf.light[9,4], lma.rmf.light[9,6]), y=c(8,8))
+lines(x=c(lma.rmf.light[2,4], lma.rmf.light[2,6]), y=c(1,1),lwd=2)
+lines(x=c(lma.rmf.light[3,4], lma.rmf.light[3,6]), y=c(2,2),lwd=2)
+lines(x=c(lma.rmf.light[4,4], lma.rmf.light[4,6]), y=c(3,3),lwd=2)
+lines(x=c(lma.rmf.light[5,4], lma.rmf.light[5,6]), y=c(4,4),lwd=2)
+lines(x=c(lma.rmf.light[6,4], lma.rmf.light[6,6]), y=c(5,5),lwd=2)
+lines(x=c(lma.rmf.light[7,4], lma.rmf.light[7,6]), y=c(6,6),lwd=2)
+lines(x=c(lma.rmf.light[8,4], lma.rmf.light[8,6]), y=c(7,7),lwd=2)
+lines(x=c(lma.rmf.light[9,4], lma.rmf.light[9,6]), y=c(8,8),lwd=2)
 points(x=lma.rmf.light[2,2], y=1, pch=19)
 points(x=lma.rmf.light[3,2], y=2, pch=19)
 points(x=lma.rmf.light[4,2], y=3, pch=19)
@@ -179,7 +211,15 @@ lar.lmf.pc2.LH=lar.lmf.pc2[1,2]+lar.lmf.pc2[4,2]*-5.98+lar.lmf.pc2[2,2]*3.90+lar
 -0.226833
 
 # Plot
-plot(final.data$log.lar1, final.data$log.rgr, type="n", xlab="Leaf Area Ratio", ylab="Relative Growth Rate")
+
+xtick=seq(-6,2,2)
+xlabels=c("0.002", "0.02", "0.14", "1.00", "7.39")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$log.lar1, final.data$log.rgr, type="n", xlab="Leaf Area Ratio", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.10)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.10)
 abline(1.102746,0.5854976, col="black", lwd=4)
 abline(-0.226833,-0.4166339, col="blue", lwd=4)
 abline(1.44388,0.4544581, col="coral", lwd=4)
@@ -187,16 +227,16 @@ abline(-0.226833,0.1541132, col="forest green", lwd=4)
 legend("topright", legend=c("LMF  PC2","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
-dotchart(lar.lmf.pc2[2:9,2], labels=lar.lmf.pc2[2:9,7], xlim=c(-.1,.45))
+dotchart(lar.lmf.pc2[2:9,2], labels=lar.lmf.pc2[2:9,7], xlim=c(-.1,.45), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(lar.lmf.pc2[2,4], lar.lmf.pc2[2,6]), y=c(1,1))
-lines(x=c(lar.lmf.pc2[3,4], lar.lmf.pc2[3,6]), y=c(2,2))
-lines(x=c(lar.lmf.pc2[4,4], lar.lmf.pc2[4,6]), y=c(3,3))
-lines(x=c(lar.lmf.pc2[5,4], lar.lmf.pc2[5,6]), y=c(4,4))
-lines(x=c(lar.lmf.pc2[6,4], lar.lmf.pc2[6,6]), y=c(5,5))
-lines(x=c(lar.lmf.pc2[7,4], lar.lmf.pc2[7,6]), y=c(6,6))
-lines(x=c(lar.lmf.pc2[8,4], lar.lmf.pc2[8,6]), y=c(7,7))
-lines(x=c(lar.lmf.pc2[9,4], lar.lmf.pc2[9,6]), y=c(8,8))
+lines(x=c(lar.lmf.pc2[2,4], lar.lmf.pc2[2,6]), y=c(1,1),lwd=2)
+lines(x=c(lar.lmf.pc2[3,4], lar.lmf.pc2[3,6]), y=c(2,2),lwd=2)
+lines(x=c(lar.lmf.pc2[4,4], lar.lmf.pc2[4,6]), y=c(3,3),lwd=2)
+lines(x=c(lar.lmf.pc2[5,4], lar.lmf.pc2[5,6]), y=c(4,4),lwd=2)
+lines(x=c(lar.lmf.pc2[6,4], lar.lmf.pc2[6,6]), y=c(5,5),lwd=2)
+lines(x=c(lar.lmf.pc2[7,4], lar.lmf.pc2[7,6]), y=c(6,6),lwd=2)
+lines(x=c(lar.lmf.pc2[8,4], lar.lmf.pc2[8,6]), y=c(7,7),lwd=2)
+lines(x=c(lar.lmf.pc2[9,4], lar.lmf.pc2[9,6]), y=c(8,8),lwd=2)
 points(x=lar.lmf.pc2[3,2], y=2, pch=19)
 points(x=lar.lmf.pc2[5,2], y=4, pch=19)
 points(x=lar.lmf.pc2[8,2], y=7, pch=19)
@@ -225,7 +265,15 @@ lma.rmf.pc1.LH=lma.rmf.pc1[1,2]+lma.rmf.pc1[4,2]*-5.53+lma.rmf.pc1[2,2]*6.02+lma
 0.4687015
 
 # Plot
-plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+
+xtick=seq(-3,3,1)
+xlabels=c("0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.10)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.10)
 abline(-1.255323,0.4296389, col="black", lwd=4)
 abline(0.4687015,-1.070995, col="blue", lwd=4)
 abline(0.5149377,0.8465451, col="coral", lwd=4)
@@ -233,16 +281,16 @@ abline(-0.1132796,-0.5350603, col="forest green", lwd=4)
 legend("topright", legend=c("RMF  PC1","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
-dotchart(lma.rmf.pc1[2:9,2], labels=lma.rmf.pc1[2:9,7], xlim=c(-.2,.1))
+dotchart(lma.rmf.pc1[2:9,2], labels=lma.rmf.pc1[2:9,7], xlim=c(-.2,.1), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(lma.rmf.pc1[2,4], lma.rmf.pc1[2,6]), y=c(1,1))
-lines(x=c(lma.rmf.pc1[3,4], lma.rmf.pc1[3,6]), y=c(2,2))
-lines(x=c(lma.rmf.pc1[4,4], lma.rmf.pc1[4,6]), y=c(3,3))
-lines(x=c(lma.rmf.pc1[5,4], lma.rmf.pc1[5,6]), y=c(4,4))
-lines(x=c(lma.rmf.pc1[6,4], lma.rmf.pc1[6,6]), y=c(5,5))
-lines(x=c(lma.rmf.pc1[7,4], lma.rmf.pc1[7,6]), y=c(6,6))
-lines(x=c(lma.rmf.pc1[8,4], lma.rmf.pc1[8,6]), y=c(7,7))
-lines(x=c(lma.rmf.pc1[9,4], lma.rmf.pc1[9,6]), y=c(8,8))
+lines(x=c(lma.rmf.pc1[2,4], lma.rmf.pc1[2,6]), y=c(1,1), lwd=2)
+lines(x=c(lma.rmf.pc1[3,4], lma.rmf.pc1[3,6]), y=c(2,2), lwd=2)
+lines(x=c(lma.rmf.pc1[4,4], lma.rmf.pc1[4,6]), y=c(3,3), lwd=2)
+lines(x=c(lma.rmf.pc1[5,4], lma.rmf.pc1[5,6]), y=c(4,4), lwd=2)
+lines(x=c(lma.rmf.pc1[6,4], lma.rmf.pc1[6,6]), y=c(5,5), lwd=2)
+lines(x=c(lma.rmf.pc1[7,4], lma.rmf.pc1[7,6]), y=c(6,6), lwd=2)
+lines(x=c(lma.rmf.pc1[8,4], lma.rmf.pc1[8,6]), y=c(7,7), lwd=2)
+lines(x=c(lma.rmf.pc1[9,4], lma.rmf.pc1[9,6]), y=c(8,8), lwd=2)
 points(x=lma.rmf.pc1[2,2], y=1, pch=19)
 points(x=lma.rmf.pc1[3,2], y=2, pch=19)
 points(x=lma.rmf.pc1[4,2], y=3, pch=19)
@@ -273,7 +321,14 @@ lma.rmf.pc2.LH=lma.rmf.pc2[1,2]+lma.rmf.pc2[4,2]*-5.53+lma.rmf.pc2[2,2]*3.90+lma
 2.798641
 
 # Plot
-plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+xtick=seq(-3,3,1)
+xlabels=c("0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.10)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.10)
 abline(0.7289176,0.3469226, col="black", lwd=4)
 abline(2.798641,-0.6416401, col="blue", lwd=4)
 abline(1.698563,0.5992843, col="coral", lwd=4)
@@ -281,16 +336,16 @@ abline(1.567559,-0.5527362, col="forest green", lwd=4)
 legend("bottomleft", legend=c("RMF  PC2","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
-dotchart(lma.rmf.pc2[2:9,2], labels=lma.rmf.pc2[2:9,7], xlim=c(-.2,.1))
+dotchart(lma.rmf.pc2[2:9,2], labels=lma.rmf.pc2[2:9,7], xlim=c(-.2,.1), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(lma.rmf.pc2[2,4], lma.rmf.pc2[2,6]), y=c(1,1))
-lines(x=c(lma.rmf.pc2[3,4], lma.rmf.pc2[3,6]), y=c(2,2))
-lines(x=c(lma.rmf.pc2[4,4], lma.rmf.pc2[4,6]), y=c(3,3))
-lines(x=c(lma.rmf.pc2[5,4], lma.rmf.pc2[5,6]), y=c(4,4))
-lines(x=c(lma.rmf.pc2[6,4], lma.rmf.pc2[6,6]), y=c(5,5))
-lines(x=c(lma.rmf.pc2[7,4], lma.rmf.pc2[7,6]), y=c(6,6))
-lines(x=c(lma.rmf.pc2[8,4], lma.rmf.pc2[8,6]), y=c(7,7))
-lines(x=c(lma.rmf.pc2[9,4], lma.rmf.pc2[9,6]), y=c(8,8))
+lines(x=c(lma.rmf.pc2[2,4], lma.rmf.pc2[2,6]), y=c(1,1), lwd=2)
+lines(x=c(lma.rmf.pc2[3,4], lma.rmf.pc2[3,6]), y=c(2,2), lwd=2)
+lines(x=c(lma.rmf.pc2[4,4], lma.rmf.pc2[4,6]), y=c(3,3), lwd=2)
+lines(x=c(lma.rmf.pc2[5,4], lma.rmf.pc2[5,6]), y=c(4,4), lwd=2)
+lines(x=c(lma.rmf.pc2[6,4], lma.rmf.pc2[6,6]), y=c(5,5), lwd=2)
+lines(x=c(lma.rmf.pc2[7,4], lma.rmf.pc2[7,6]), y=c(6,6), lwd=2)
+lines(x=c(lma.rmf.pc2[8,4], lma.rmf.pc2[8,6]), y=c(7,7), lwd=2)
+lines(x=c(lma.rmf.pc2[9,4], lma.rmf.pc2[9,6]), y=c(8,8), lwd=2)
 points(x=lma.rmf.pc2[4,2], y=3, pch=19)
 points(x=lma.rmf.pc2[8,2], y=7, pch=19)
 points(x=lma.rmf.pc2[9,2], y=8, pch=19)
@@ -318,7 +373,15 @@ lma.smf.light.LH=lma.smf.light[1,2]+lma.smf.light[4,2]*-6.51+lma.smf.light[2,2]*
 2.883874
 
 # Plot
-plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+
+xtick=seq(-3,3,1)
+xlabels=c("0.05", "0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.10)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.10)
 abline(1.164414,-0.3306204, col="black", lwd=4)
 abline(2.883874,0.3626425, col="blue", lwd=4)
 abline(2.146015,-1.25495, col="coral", lwd=4)
@@ -326,16 +389,16 @@ abline(0.8296849,0.4548235, col="forest green", lwd=4)
 legend("bottomleft", legend=c("SMF  Light","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
-dotchart(lma.smf.light[2:9,2], labels=lma.smf.light[2:9,7], xlim=c(-.25,.2))
+dotchart(lma.smf.light[2:9,2], labels=lma.smf.light[2:9,7], xlim=c(-.25,.2), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(lma.smf.light[2,4], lma.smf.light[2,6]), y=c(1,1))
-lines(x=c(lma.smf.light[3,4], lma.smf.light[3,6]), y=c(2,2))
-lines(x=c(lma.smf.light[4,4], lma.smf.light[4,6]), y=c(3,3))
-lines(x=c(lma.smf.light[5,4], lma.smf.light[5,6]), y=c(4,4))
-lines(x=c(lma.smf.light[6,4], lma.smf.light[6,6]), y=c(5,5))
-lines(x=c(lma.smf.light[7,4], lma.smf.light[7,6]), y=c(6,6))
-lines(x=c(lma.smf.light[8,4], lma.smf.light[8,6]), y=c(7,7))
-lines(x=c(lma.smf.light[9,4], lma.smf.light[9,6]), y=c(8,8))
+lines(x=c(lma.smf.light[2,4], lma.smf.light[2,6]), y=c(1,1), lwd=2)
+lines(x=c(lma.smf.light[3,4], lma.smf.light[3,6]), y=c(2,2), lwd=2)
+lines(x=c(lma.smf.light[4,4], lma.smf.light[4,6]), y=c(3,3), lwd=2)
+lines(x=c(lma.smf.light[5,4], lma.smf.light[5,6]), y=c(4,4), lwd=2)
+lines(x=c(lma.smf.light[6,4], lma.smf.light[6,6]), y=c(5,5), lwd=2)
+lines(x=c(lma.smf.light[7,4], lma.smf.light[7,6]), y=c(6,6), lwd=2)
+lines(x=c(lma.smf.light[8,4], lma.smf.light[8,6]), y=c(7,7), lwd=2)
+lines(x=c(lma.smf.light[9,4], lma.smf.light[9,6]), y=c(8,8), lwd=2)
 points(x=lma.smf.light[2,2], y=1, pch=19)
 points(x=lma.smf.light[3,2], y=2, pch=19)
 points(x=lma.smf.light[4,2], y=3, pch=19)
@@ -366,7 +429,15 @@ thick.rmf.pc1.LH=thick.rmf.pc1[1,2]+thick.rmf.pc1[4,2]*-5.53+thick.rmf.pc1[2,2]*
 2.976948
 
 # Plot
-plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Mean Thickness", ylab="Relative Growth Rate")
+
+xtick=seq(-2,3,1)
+xlabels=c("0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Mean Thickness", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.10)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.10)
 abline(1.291638,0.7411207, col="black", lwd=4)
 abline(2.976948,-1.428547, col="blue", lwd=4)
 abline(3.091157,1.007932, col="coral", lwd=4)
@@ -374,16 +445,16 @@ abline(2.53052,-0.6721572, col="forest green", lwd=4)
 legend("bottomleft", legend=c("RMF  PC1","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
-dotchart(thick.rmf.pc1[2:9,2], labels=thick.rmf.pc1[2:9,7], xlim=c(-.2,.1))
+dotchart(thick.rmf.pc1[2:9,2], labels=thick.rmf.pc1[2:9,7], xlim=c(-.2,.1), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(thick.rmf.pc1[2,4], thick.rmf.pc1[2,6]), y=c(1,1))
-lines(x=c(thick.rmf.pc1[3,4], thick.rmf.pc1[3,6]), y=c(2,2))
-lines(x=c(thick.rmf.pc1[4,4], thick.rmf.pc1[4,6]), y=c(3,3))
-lines(x=c(thick.rmf.pc1[5,4], thick.rmf.pc1[5,6]), y=c(4,4))
-lines(x=c(thick.rmf.pc1[6,4], thick.rmf.pc1[6,6]), y=c(5,5))
-lines(x=c(thick.rmf.pc1[7,4], thick.rmf.pc1[7,6]), y=c(6,6))
-lines(x=c(thick.rmf.pc1[8,4], thick.rmf.pc1[8,6]), y=c(7,7))
-lines(x=c(thick.rmf.pc1[9,4], thick.rmf.pc1[9,6]), y=c(8,8))
+lines(x=c(thick.rmf.pc1[2,4], thick.rmf.pc1[2,6]), y=c(1,1), lwd=2)
+lines(x=c(thick.rmf.pc1[3,4], thick.rmf.pc1[3,6]), y=c(2,2), lwd=2)
+lines(x=c(thick.rmf.pc1[4,4], thick.rmf.pc1[4,6]), y=c(3,3), lwd=2)
+lines(x=c(thick.rmf.pc1[5,4], thick.rmf.pc1[5,6]), y=c(4,4), lwd=2)
+lines(x=c(thick.rmf.pc1[6,4], thick.rmf.pc1[6,6]), y=c(5,5), lwd=2)
+lines(x=c(thick.rmf.pc1[7,4], thick.rmf.pc1[7,6]), y=c(6,6), lwd=2)
+lines(x=c(thick.rmf.pc1[8,4], thick.rmf.pc1[8,6]), y=c(7,7), lwd=2)
+lines(x=c(thick.rmf.pc1[9,4], thick.rmf.pc1[9,6]), y=c(8,8), lwd=2)
 points(x=thick.rmf.pc1[4,2], y=3, pch=19)
 points(x=thick.rmf.pc1[8,2], y=7, pch=19)
 points(x=thick.rmf.pc1[9,2], y=8, pch=19)
@@ -411,7 +482,15 @@ thick.smf.pc1.LH=thick.smf.pc1[1,2]+thick.smf.pc1[4,2]*-6.51+thick.smf.pc1[2,2]*
 -0.3561466
 
 #Plot
-plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Mean Thickness", ylab="Relative Growth Rate")
+
+xtick=seq(-2,3,1)
+xlabels=c("0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Mean Thickness", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.10)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.10)
 abline(-0.8197453,-0.3758739, col="black", lwd=4)
 abline(-0.3561466,0.505414, col="blue", lwd=4)
 abline(1.927117,-1.102249, col="coral", lwd=4)
@@ -419,16 +498,16 @@ abline(-0.5580381,0.4699858, col="forest green", lwd=4)
 legend("topright", legend=c("SMF  PC1","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
-dotchart(thick.smf.pc1[2:9,2], labels=thick.smf.pc1[2:9,7], xlim=c(-.25,.1))
+dotchart(thick.smf.pc1[2:9,2], labels=thick.smf.pc1[2:9,7], xlim=c(-.25,.1), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(thick.smf.pc1[2,4], thick.smf.pc1[2,6]), y=c(1,1))
-lines(x=c(thick.smf.pc1[3,4], thick.smf.pc1[3,6]), y=c(2,2))
-lines(x=c(thick.smf.pc1[4,4], thick.smf.pc1[4,6]), y=c(3,3))
-lines(x=c(thick.smf.pc1[5,4], thick.smf.pc1[5,6]), y=c(4,4))
-lines(x=c(thick.smf.pc1[6,4], thick.smf.pc1[6,6]), y=c(5,5))
-lines(x=c(thick.smf.pc1[7,4], thick.smf.pc1[7,6]), y=c(6,6))
-lines(x=c(thick.smf.pc1[8,4], thick.smf.pc1[8,6]), y=c(7,7))
-lines(x=c(thick.smf.pc1[9,4], thick.smf.pc1[9,6]), y=c(8,8))
+lines(x=c(thick.smf.pc1[2,4], thick.smf.pc1[2,6]), y=c(1,1), lwd=2)
+lines(x=c(thick.smf.pc1[3,4], thick.smf.pc1[3,6]), y=c(2,2), lwd=2)
+lines(x=c(thick.smf.pc1[4,4], thick.smf.pc1[4,6]), y=c(3,3), lwd=2)
+lines(x=c(thick.smf.pc1[5,4], thick.smf.pc1[5,6]), y=c(4,4), lwd=2)
+lines(x=c(thick.smf.pc1[6,4], thick.smf.pc1[6,6]), y=c(5,5), lwd=2)
+lines(x=c(thick.smf.pc1[7,4], thick.smf.pc1[7,6]), y=c(6,6), lwd=2)
+lines(x=c(thick.smf.pc1[8,4], thick.smf.pc1[8,6]), y=c(7,7), lwd=2)
+lines(x=c(thick.smf.pc1[9,4], thick.smf.pc1[9,6]), y=c(8,8), lwd=2)
 points(x=thick.smf.pc1[2,2], y=1, pch=19)
 points(x=thick.smf.pc1[4,2], y=3, pch=19)
 points(x=thick.smf.pc1[8,2], y=7, pch=19)
@@ -457,7 +536,15 @@ thick.ssl.pc2.LH=thick.ssl.pc2[1,2]+thick.ssl.pc2[4,2]*-3.25+thick.ssl.pc2[2,2]*
 3.394209
 
 #Plot
-plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Mean Thickness", ylab="Relative Growth Rate")
+
+xtick=seq(-2,3,1)
+xlabels=c("0.14", "0.37", "1.00", "2.72", "7.39", "20.09")
+ytick=seq(-1,4,1)
+ylabels=c("0.37", "1.00", "2.72", "7.39", "20.09", "54.60")
+
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Mean Thickness", ylab="Relative Growth Rate", xaxt="n", yaxt="n", cex.lab=1.25)
+axis(side=1, at=xtick, labels=xlabels, cex.axis=1.10)
+axis(side=2, at=ytick, labels=ylabels, cex.axis=1.10)
 abline(3.953492,-0.6532705, col="black", lwd=4)
 abline(3.394209,0.4454995, col="blue", lwd=4)
 abline(3.81898,-0.7650798, col="coral", lwd=4)
@@ -465,15 +552,15 @@ abline(3.394209,0.7147707, col="forest green", lwd=4)
 legend("bottomleft", legend=c("SSL  PC2","High  High", "Low   High", "Low   Low", "High  Low"),
 col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
 
-dotchart(thick.ssl.pc2[2:9,2], labels=thick.ssl.pc2[2:9,7], xlim=c(-.15,.15))
+dotchart(thick.ssl.pc2[2:9,2], labels=thick.ssl.pc2[2:9,7], xlim=c(-.15,.15), cex=1.5)
 abline(v=0, lty=2)
-lines(x=c(thick.ssl.pc2[2,4], thick.ssl.pc2[2,6]), y=c(1,1))
-lines(x=c(thick.ssl.pc2[3,4], thick.ssl.pc2[3,6]), y=c(2,2))
-lines(x=c(thick.ssl.pc2[4,4], thick.ssl.pc2[4,6]), y=c(3,3))
-lines(x=c(thick.ssl.pc2[5,4], thick.ssl.pc2[5,6]), y=c(4,4))
-lines(x=c(thick.ssl.pc2[6,4], thick.ssl.pc2[6,6]), y=c(5,5))
-lines(x=c(thick.ssl.pc2[7,4], thick.ssl.pc2[7,6]), y=c(6,6))
-lines(x=c(thick.ssl.pc2[8,4], thick.ssl.pc2[8,6]), y=c(7,7))
-lines(x=c(thick.ssl.pc2[9,4], thick.ssl.pc2[9,6]), y=c(8,8))
+lines(x=c(thick.ssl.pc2[2,4], thick.ssl.pc2[2,6]), y=c(1,1), lwd=2)
+lines(x=c(thick.ssl.pc2[3,4], thick.ssl.pc2[3,6]), y=c(2,2), lwd=2)
+lines(x=c(thick.ssl.pc2[4,4], thick.ssl.pc2[4,6]), y=c(3,3), lwd=2)
+lines(x=c(thick.ssl.pc2[5,4], thick.ssl.pc2[5,6]), y=c(4,4), lwd=2)
+lines(x=c(thick.ssl.pc2[6,4], thick.ssl.pc2[6,6]), y=c(5,5), lwd=2)
+lines(x=c(thick.ssl.pc2[7,4], thick.ssl.pc2[7,6]), y=c(6,6), lwd=2)
+lines(x=c(thick.ssl.pc2[8,4], thick.ssl.pc2[8,6]), y=c(7,7), lwd=2)
+lines(x=c(thick.ssl.pc2[9,4], thick.ssl.pc2[9,6]), y=c(8,8), lwd=2)
 points(x=thick.ssl.pc2[8,2], y=7, pch=19)
 points(x=thick.ssl.pc2[9,2], y=8, pch=19)

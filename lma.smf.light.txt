@@ -1,0 +1,212 @@
+results <- readRDS("lma.smf.light.jags_results.RData")
+lma.smf.light.results=do.call(rbind,results) # combine output from 6 MCMC chains
+lma.smf.light.sample.df=lma.smf.light.results[,c(3,5,6,8)] # extract columns of parameters needed
+
+# subsetting results to only include last 20,000 iterations from each of the 6 chains
+chain1=lma.smf.light.results[c(30001:50000),]
+chain2=lma.smf.light.results[c(80001:100000),]
+chain3=lma.smf.light.results[c(130001:150000),]
+chain4=lma.smf.light.results[c(180001:200000),]
+chain5=lma.smf.light.results[c(230001:250000),]
+chain6=lma.smf.light.results[c(280001:300000),]
+
+new.lma.smf.light.results=rbind(chain1,chain2,chain3,chain4,chain5,chain6)
+new.lma.smf.light.results.par=new.lma.smf.light.results[,c(3,5,6,8)]
+
+# Sample random row of parameter values and calculate first partial derivative.
+
+final.data=read.csv("Final.Data.csv", header=T, row.names=1)
+lma.smf.light.slopes=matrix(data=NA, nrow=1559, ncol=1000)
+
+for(i in 1:1000){
+row.sample=lma.smf.light.sample.df[sample(nrow(lma.smf.light.sample.df), 1),]
+lma.smf.light.output=row.sample[1]+row.sample[2]*final.data$log.smf+row.sample[3]*final.data$log.light+row.sample[4]*(final.data$log.smf*final.data$log.light)
+lma.smf.light.slopes[,i]=lma.smf.light.output
+}
+
+lma.smf.light=read.csv("lma.smf.light.rgr.Parameters.csv", header=T, row.names=1) # mean parameter values from model
+
+# value of first partial derivative from mean parameter values
+
+lma.smf.light.mean=lma.smf.light[3,2]+lma.smf.light[5,2]*final.data$log.smf+lma.smf.light[6,2]*final.data$log.light+lma.smf.light[8,2]*(final.data$log.smf*final.data$log.light)
+
+# regression to get slope and intercept value for plotting
+
+lma.smf.light.mean.lm=lm(lma.smf.light.mean~final.data$log.smf*final.data$log.light)
+
+plot((final.data$log.smf*final.data$log.light),lma.smf.light.mean,type="n")
+abline(-0.095500, -0.044880, col="black") # intercept and slope
+
+# run linear models for 1000 iterations of the first partial derivative calculated above.
+
+lm.1000=matrix(data=NA, ncol=2, nrow=1000)
+
+for(i in 1:1000){
+lin.mod=lm(lma.smf.light.slopes[,i]~final.data$log.smf*final.data$log.light)
+lm.1000[i,1]=lin.mod$coefficients[1] # intercept
+lm.1000[i,2]=lin.mod$coefficients[4] # slope
+}
+# Determine CIs for intercept and slope distributions
+
+quant.intercept=quantile(lm.1000[,1], probs=c(0.025, 0.975))
+quant.slope=quantile(lm.1000[,2], probs=c(0.025, 0.975))
+
+plot((final.data$log.smf*final.data$log.light),lma.smf.light.mean, type="n")
+abline(-0.095500, -0.044880, col="black") # mean value
+abline(-0.15944359,-0.086024456, col="gray") # lower limit
+abline(-0.03217784 ,-0.005162304, col="gray") # upper limit
+
+# Plotting all of the first partial derivatives
+
+for(i in 1:1000){
+plot((final.data$log.smf*final.data$log.light),lma.smf.light.slopes[,i], col="gray",ylim=c(-0.20,0.02),ylab=NA, type="l")
+par(new=TRUE)
+}
+par(new=TRUE)
+plot((final.data$log.smf*final.data$log.light),lma.smf.light.mean, ylim=c(-0.20,0.02), ylab="slope of the LMA*smf*Light relationship with RGR", type="l")
+
+# Code to produce 95% credible intervals around partial effects
+
+# Slope based on mean parameter values
+lma.smf.light.HH=lma.smf.light[3,2]+lma.smf.light[5,2]*2.95+lma.smf.light[6,2]*2.97+lma.smf.light[8,2]*(2.95*2.97)
+-0.3306204
+lma.smf.light.LH=lma.smf.light[3,2]+lma.smf.light[5,2]*-6.51+lma.smf.light[6,2]*2.97+lma.smf.light[8,2]*(-6.51*2.97)
+0.3626425
+lma.smf.light.LL=lma.smf.light[3,2]+lma.smf.light[5,2]*-6.51+lma.smf.light[6,2]*-2.69+lma.smf.light[8,2]*(-6.51*-2.69)
+-1.25495
+lma.smf.light.HL=lma.smf.light[3,2]+lma.smf.light[5,2]*2.95+lma.smf.light[6,2]*-2.69+lma.smf.light[8,2]*(2.95*-2.69)
+0.4548235
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+lma.smf.light.slopes.HH=matrix(data=NA, nrow=1000, ncol=1)
+lma.smf.light.slopes.LH=matrix(data=NA, nrow=1000, ncol=1)
+lma.smf.light.slopes.LL=matrix(data=NA, nrow=1000, ncol=1)
+lma.smf.light.slopes.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.smf.light.results.par[sample(nrow(new.lma.smf.light.results.par), 1),]
+lma.smf.light.output.HH=row.sample[1]+row.sample[2]*2.95+row.sample[3]*2.97+row.sample[4]*(2.95*2.97)
+lma.smf.light.output.LH=row.sample[1]+row.sample[2]*-6.51+row.sample[3]*2.97+row.sample[4]*(-6.51*2.97)
+lma.smf.light.output.LL=row.sample[1]+row.sample[2]*-6.51+row.sample[3]*-2.69+row.sample[4]*(-6.51*-2.69)
+lma.smf.light.output.HL=row.sample[1]+row.sample[2]*2.95+row.sample[3]*-2.69+row.sample[4]*(2.95*-2.69)
+lma.smf.light.slopes.HH[i,]=lma.smf.light.output.HH
+lma.smf.light.slopes.LH[i,]=lma.smf.light.output.LH
+lma.smf.light.slopes.LL[i,]=lma.smf.light.output.LL
+lma.smf.light.slopes.HL[i,]=lma.smf.light.output.HL
+}
+
+high.light=cbind(lma.smf.light.slopes.HH, lma.smf.light.slopes.LH)
+# 839/1000 have different slopes
+# CI = 0.8186458 1.0000000
+# 774/1000 have different slopes and direction matches mean slope direction
+# CI = 0.7511599 1.0000000
+
+low.light=cbind(lma.smf.light.slopes.LL, lma.smf.light.slopes.HL)
+# 994/1000 have different slopes
+# CI =   0.9881922 1.0000000
+# 994/1000 have different slopes and direction matches mean slope direction
+# CI =  0.9881922 1.0000000
+
+
+
+## Intercepts
+
+new.lma.smf.light.intercept.par=new.lma.smf.light.results[,c(1,4,2,7)]# extract columns of parameters needed
+
+# Intercept based on mean parameter values
+lma.smf.light.HH=lma.smf.light[1,2]+lma.smf.light[4,2]*2.95+lma.smf.light[2,2]*2.97+lma.smf.light[7,2]*(2.95*2.97)
+1.164414
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+lma.smf.light.intercepts.HH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.smf.light.intercept.par[sample(nrow(new.lma.smf.light.intercept.par), 1),]
+lma.smf.light.output.HH=row.sample[1]+row.sample[2]*2.95+row.sample[3]*2.97+row.sample[4]*(2.95*2.97)
+lma.smf.light.intercepts.HH[i,]=lma.smf.light.output.HH
+}
+
+HH.quantile.intercept=quantile(lma.smf.light.intercepts.HH[,1], probs=c(0.025, 0.975))
+
+lower = -6.879706 upper = 8.790828 
+
+lma.smf.light.LH=lma.smf.light[1,2]+lma.smf.light[4,2]*-6.51+lma.smf.light[2,2]*2.97+lma.smf.light[7,2]*(-6.51*2.97)
+2.883874
+
+lma.smf.light.intercepts.LH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.smf.light.intercept.par[sample(nrow(new.lma.smf.light.intercept.par), 1),]
+lma.smf.light.output.LH=row.sample[1]+row.sample[2]*-6.51+row.sample[3]*2.97+row.sample[4]*(-6.51*2.97)
+lma.smf.light.intercepts.LH[i,]=lma.smf.light.output.LH
+}
+
+LH.quantile.intercept=quantile(lma.smf.light.intercepts.LH[,1], probs=c(0.025, 0.975))
+
+lower = -5.267648 upper = 10.985132 
+
+lma.smf.light.LL=lma.smf.light[1,2]+lma.smf.light[4,2]*-6.51+lma.smf.light[2,2]*-2.69+lma.smf.light[7,2]*(-6.51*-2.69)
+2.146015
+
+lma.smf.light.intercepts.LL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.smf.light.intercept.par[sample(nrow(new.lma.smf.light.intercept.par), 1),]
+lma.smf.light.output.LL=row.sample[1]+row.sample[2]*-6.51+row.sample[3]*-2.69+row.sample[4]*(-6.51*-2.69)
+lma.smf.light.intercepts.LL[i,]=lma.smf.light.output.LL
+}
+
+LL.quantile.intercept=quantile(lma.smf.light.intercepts.LL[,1], probs=c(0.025, 0.975))
+
+lower = -5.830672 upper = 10.308177 
+
+lma.smf.light.HL=lma.smf.light[1,2]+lma.smf.light[4,2]*2.95+lma.smf.light[2,2]*-2.69+lma.smf.light[7,2]*(2.95*-2.69)
+0.8296849
+
+lma.smf.light.intercepts.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.smf.light.intercept.par[sample(nrow(new.lma.smf.light.intercept.par), 1),]
+lma.smf.light.output.HL=row.sample[1]+row.sample[2]*2.95+row.sample[3]*-2.69+row.sample[4]*(2.95*-2.69)
+lma.smf.light.intercepts.HL[i,]=lma.smf.light.output.HL
+}
+
+HL.quantile.intercept=quantile(lma.smf.light.intercepts.HL[,1], probs=c(0.025, 0.975))
+
+lower = -7.115109 upper = 8.727452 
+
+# Plot Original
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+abline(-0.2655351,0.4429909, col="black", lwd=4)
+abline(2.521027,-1.103356, col="blue", lwd=4)
+abline(0.2403631,0.6726187, col="coral", lwd=4)
+abline(0.2158185,-0.4383616, col="forest green", lwd=4)
+legend("topright", legend=c("smf  Light","High  High", "Low   High", "Low   Low", "High  Low"),
+col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
+
+# Plot of HH
+
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-6.9,8.8))
+abline(1.164414,-0.3306204, col="black", lwd=4) # original
+abline(-6.879706, -0.7672503 , col="gray", lwd=4) # lower
+abline(8.790828 , 0.0975388   , col="gray", lwd=4) # upper
+
+# Plot of LH
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-5.3,11.0))
+abline(2.883874,0.3626425, col="blue", lwd=4)
+abline(-5.267648, -0.5735258 , col="gray", lwd=4)
+abline(10.985132, 1.2631601 , col="gray", lwd=4)
+
+# Plot of LL
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-5.9,10.4))
+abline(2.146015,-1.25495, col="coral", lwd=4)
+abline(-5.830672, -2.0393463, col="gray", lwd=4)
+abline(10.308177  , -0.4309337  , col="gray", lwd=4)
+
+# Plot of HL
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-7.2,8.8))
+abline(0.8296849,0.4548235, col="forest green", lwd=4)
+abline(-7.115109, 0.1141156, col="gray", lwd=4)
+abline(8.727452 , 0.8228023   , col="gray", lwd=4)

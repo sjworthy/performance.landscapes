@@ -1,0 +1,212 @@
+results <- readRDS("thick.ssl.pc2.jags_results.RData")
+thick.ssl.Comp.2.results=do.call(rbind,results) # combine output from 6 MCMC chains
+thick.ssl.Comp.2.sample.df=thick.ssl.Comp.2.results[,c(3,5,6,8)] # extract columns of parameters needed
+
+# subsetting results to only include last 20,000 iterations from each of the 6 chains
+chain1=thick.ssl.Comp.2.results[c(30001:50000),]
+chain2=thick.ssl.Comp.2.results[c(80001:100000),]
+chain3=thick.ssl.Comp.2.results[c(130001:150000),]
+chain4=thick.ssl.Comp.2.results[c(180001:200000),]
+chain5=thick.ssl.Comp.2.results[c(230001:250000),]
+chain6=thick.ssl.Comp.2.results[c(280001:300000),]
+
+new.thick.ssl.Comp.2.results=rbind(chain1,chain2,chain3,chain4,chain5,chain6)
+new.thick.ssl.Comp.2.results.par=new.thick.ssl.Comp.2.results[,c(3,5,6,8)]
+
+# Sample random row of parameter values and calculate first partial derivative.
+
+final.data=read.csv("Final.Data.csv", header=T, row.names=1)
+thick.ssl.Comp.2.slopes=matrix(data=NA, nrow=1559, ncol=1000)
+
+for(i in 1:1000){
+row.sample=thick.ssl.Comp.2.sample.df[sample(nrow(thick.ssl.Comp.2.sample.df), 1),]
+thick.ssl.Comp.2.output=row.sample[1]+row.sample[2]*final.data$log.ssl+row.sample[3]*final.data$Comp.2+row.sample[4]*(final.data$log.ssl*final.data$Comp.2)
+thick.ssl.Comp.2.slopes[,i]=thick.ssl.Comp.2.output
+}
+
+thick.ssl.Comp.2=read.csv("thick.ssl.pc2.rgr.Parameters.csv", header=T, row.names=1) # mean parameter values from model
+
+# value of first partial derivative from mean parameter values
+
+thick.ssl.Comp.2.mean=thick.ssl.Comp.2[3,2]+thick.ssl.Comp.2[5,2]*final.data$log.ssl+thick.ssl.Comp.2[6,2]*final.data$Comp.2+thick.ssl.Comp.2[8,2]*(final.data$log.ssl*final.data$Comp.2)
+
+# regression to get slope and intercept value for plotting
+
+thick.ssl.Comp.2.mean.lm=lm(thick.ssl.Comp.2.mean~final.data$log.ssl*final.data$Comp.2)
+
+plot((final.data$log.ssl*final.data$Comp.2),thick.ssl.Comp.2.mean,type="n")
+abline(-0.07153, -0.04548, col="black") # intercept and slope
+
+# run linear models for 1000 iterations of the first partial derivative calculated above.
+
+lm.1000=matrix(data=NA, ncol=2, nrow=1000)
+
+for(i in 1:1000){
+lin.mod=lm(thick.ssl.Comp.2.slopes[,i]~final.data$log.ssl*final.data$Comp.2)
+lm.1000[i,1]=lin.mod$coefficients[1] # intercept
+lm.1000[i,2]=lin.mod$coefficients[4] # slope
+}
+# Determine CIs for intercept and slope distributions
+
+quant.intercept=quantile(lm.1000[,1], probs=c(0.025, 0.975))
+quant.slope=quantile(lm.1000[,2], probs=c(0.025, 0.975))
+
+plot((final.data$log.ssl*final.data$Comp.2),thick.ssl.Comp.2.mean, type="n")
+abline(-0.07153, -0.04548, col="black") # mean value
+abline(-0.145576778 ,-0.07253712, col="gray") # lower limit
+abline(0.004878075 ,-0.02024327, col="gray") # upper limit
+
+# Plotting all of the first partial derivatives
+
+for(i in 1:1000){
+plot((final.data$log.ssl*final.data$Comp.2),thick.ssl.Comp.2.slopes[,i], col="gray",ylim=c(-0.20,0.02),ylab=NA, type="l")
+par(new=TRUE)
+}
+par(new=TRUE)
+plot((final.data$log.ssl*final.data$Comp.2),thick.ssl.Comp.2.mean, ylim=c(-0.20,0.02), ylab="slope of the thick*ssl*Light relationship with RGR", type="l")
+
+# Code to produce 95% credible intervals around partial effects
+
+# Slope based on mean parameter values
+thick.ssl.pc2.HH=thick.ssl.pc2[3,2]+thick.ssl.pc2[5,2]*2.84+thick.ssl.pc2[6,2]*3.90+thick.ssl.pc2[8,2]*(2.84*3.90)
+-0.6532705
+thick.ssl.pc2.LH=thick.ssl.pc2[3,2]+thick.ssl.pc2[5,2]*-3.25+thick.ssl.pc2[6,2]*3.90+thick.ssl.pc2[8,2]*(-3.25*3.90)
+0.4454995
+thick.ssl.pc2.LL=thick.ssl.pc2[3,2]+thick.ssl.pc2[5,2]*-3.25+thick.ssl.pc2[6,2]*-5.41+thick.ssl.pc2[8,2]*(-3.25*-5.41)
+-0.7650798
+thick.ssl.pc2.HL=thick.ssl.pc2[3,2]+thick.ssl.pc2[5,2]*2.84+thick.ssl.pc2[6,2]*-5.41+thick.ssl.pc2[8,2]*(2.84*-5.41)
+0.7147707
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+thick.ssl.Comp.2.slopes.HH=matrix(data=NA, nrow=1000, ncol=1)
+thick.ssl.Comp.2.slopes.LH=matrix(data=NA, nrow=1000, ncol=1)
+thick.ssl.Comp.2.slopes.LL=matrix(data=NA, nrow=1000, ncol=1)
+thick.ssl.Comp.2.slopes.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.ssl.Comp.2.results.par[sample(nrow(new.thick.ssl.Comp.2.results.par), 1),]
+thick.ssl.Comp.2.output.HH=row.sample[1]+row.sample[2]*2.84+row.sample[3]*3.90+row.sample[4]*(2.84*3.90)
+thick.ssl.Comp.2.output.LH=row.sample[1]+row.sample[2]*-3.25+row.sample[3]*3.90+row.sample[4]*(-3.25*3.90)
+thick.ssl.Comp.2.output.LL=row.sample[1]+row.sample[2]*-3.25+row.sample[3]*-5.41+row.sample[4]*(-3.25*-5.41)
+thick.ssl.Comp.2.output.HL=row.sample[1]+row.sample[2]*2.84+row.sample[3]*-5.41+row.sample[4]*(2.84*-5.41)
+thick.ssl.Comp.2.slopes.HH[i,]=thick.ssl.Comp.2.output.HH
+thick.ssl.Comp.2.slopes.LH[i,]=thick.ssl.Comp.2.output.LH
+thick.ssl.Comp.2.slopes.LL[i,]=thick.ssl.Comp.2.output.LL
+thick.ssl.Comp.2.slopes.HL[i,]=thick.ssl.Comp.2.output.HL
+}
+
+high.soil=cbind(thick.ssl.Comp.2.slopes.HH, thick.ssl.Comp.2.slopes.LH)
+write.csv(high.soil, file="thick.ssl.high.pc2.csv")
+# 974/1000 have different slopes
+# CI = 0.9641057 1.0000000
+# 974/1000 have different slopes and direction matches mean slope direction
+# CI = 0.9641057 1.0000000
+
+low.soil=cbind(thick.ssl.Comp.2.slopes.LL, thick.ssl.Comp.2.slopes.HL)
+write.csv(low.soil, file="thick.ssl.low.pc2.csv")
+# 998/1000 have different slopes
+# CI = 0.9937177 1.0000000
+# 998/1000 have different slopes and direction matches mean slope direction
+# CI = 0.9937177 1.0000000
+
+## Intercepts
+
+new.thick.ssl.Comp.2.intercept.par=new.thick.ssl.Comp.2.results[,c(1,4,2,7)]# extract columns of parameters needed
+
+# Intercept based on mean parameter values
+thick.ssl.pc2.HH=thick.ssl.pc2[1,2]+thick.ssl.pc2[4,2]*2.84+thick.ssl.pc2[2,2]*3.90+thick.ssl.pc2[7,2]*(2.84*3.90)
+3.953492
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+thick.ssl.Comp.2.intercepts.HH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.ssl.Comp.2.intercept.par[sample(nrow(new.thick.ssl.Comp.2.intercept.par), 1),]
+thick.ssl.Comp.2.output.HH=row.sample[1]+row.sample[2]*2.84+row.sample[3]*3.90+row.sample[4]*(2.84*3.90)
+thick.ssl.Comp.2.intercepts.HH[i,]=thick.ssl.Comp.2.output.HH
+}
+
+HH.quantile.intercept=quantile(thick.ssl.Comp.2.intercepts.HH[,1], probs=c(0.025, 0.975))
+
+lower = -2.025142  upper = 10.293457
+
+thick.ssl.pc2.LH=thick.ssl.pc2[1,2]+thick.ssl.pc2[4,2]*-3.25+thick.ssl.pc2[2,2]*3.90+thick.ssl.pc2[7,2]*(-3.25*3.90)
+3.394209
+
+thick.ssl.Comp.2.intercepts.LH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.ssl.Comp.2.intercept.par[sample(nrow(new.thick.ssl.Comp.2.intercept.par), 1),]
+thick.ssl.Comp.2.output.LH=row.sample[1]+row.sample[2]*-3.25+row.sample[3]*3.90+row.sample[4]*(-3.25*3.90)
+thick.ssl.Comp.2.intercepts.LH[i,]=thick.ssl.Comp.2.output.LH
+}
+
+LH.quantile.intercept=quantile(thick.ssl.Comp.2.intercepts.LH[,1], probs=c(0.025, 0.975))
+
+lower = -7.434560 upper = 6.188216 
+
+thick.ssl.pc2.LL=thick.ssl.pc2[1,2]+thick.ssl.pc2[4,2]*-3.25+thick.ssl.pc2[2,2]*-5.41+thick.ssl.pc2[7,2]*(-3.25*-5.41)
+3.81898
+
+thick.ssl.Comp.2.intercepts.LL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.ssl.Comp.2.intercept.par[sample(nrow(new.thick.ssl.Comp.2.intercept.par), 1),]
+thick.ssl.Comp.2.output.LL=row.sample[1]+row.sample[2]*-3.25+row.sample[3]*-5.41+row.sample[4]*(-3.25*-5.41)
+thick.ssl.Comp.2.intercepts.LL[i,]=thick.ssl.Comp.2.output.LL
+}
+
+LL.quantile.intercept=quantile(thick.ssl.Comp.2.intercepts.LL[,1], probs=c(0.025, 0.975))
+
+lower = -1.949130  upper = 9.782642
+
+thick.ssl.pc2.HL=thick.ssl.pc2[1,2]+thick.ssl.pc2[4,2]*2.84+thick.ssl.pc2[2,2]*-5.41+thick.ssl.pc2[7,2]*(2.84*-5.41)
+3.923716
+
+thick.ssl.Comp.2.intercepts.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.ssl.Comp.2.intercept.par[sample(nrow(new.thick.ssl.Comp.2.intercept.par), 1),]
+thick.ssl.Comp.2.output.HL=row.sample[1]+row.sample[2]*2.84+row.sample[3]*-5.41+row.sample[4]*(2.84*-5.41)
+thick.ssl.Comp.2.intercepts.HL[i,]=thick.ssl.Comp.2.output.HL
+}
+
+HL.quantile.intercept=quantile(thick.ssl.Comp.2.intercepts.HL[,1], probs=c(0.025, 0.975))
+
+lower = -2.066819 upper = 10.241859 
+
+# Plot Original
+plot(final.data$log.thick, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+abline(-0.2655351,0.4429909, col="black", lwd=4)
+abline(2.521027,-1.103356, col="blue", lwd=4)
+abline(0.2403631,0.6726187, col="coral", lwd=4)
+abline(0.2158185,-0.4383616, col="forest green", lwd=4)
+legend("topright", legend=c("ssl  Light","High  High", "Low   High", "Low   Low", "High  Low"),
+col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
+
+# Plot of HH
+
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-2.1,10.3))
+abline(3.953492,-0.6532705, col="black", lwd=4) # original
+abline(-2.025142,-1.0351324, col="gray", lwd=4) # lower
+abline(10.293457, -0.2995547, col="gray", lwd=4) # upper
+
+# Plot of LH
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-2.4,9.7))
+abline(3.394209,0.4454995, col="blue", lwd=4)
+abline(-2.316632, 0.85102479, col="gray", lwd=4)
+abline(9.656332, 0.03596744, col="gray", lwd=4)
+
+# Plot of LL
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-2.0,9.8))
+abline(3.81898,-0.7650798, col="coral", lwd=4)
+abline(-1.949130,-1.2707127, col="gray", lwd=4)
+abline(9.782642, -0.2777562, col="gray", lwd=4)
+
+# Plot of HL
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-2.1,10.3))
+abline(3.923716,0.7147707, col="forest green", lwd=4)
+abline(-2.066819, 0.313102 , col="gray", lwd=4)
+abline(10.241859 ,1.124530 , col="gray", lwd=4)

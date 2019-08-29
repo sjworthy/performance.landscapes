@@ -1,0 +1,257 @@
+# Code to produce 95% credible intervals around first partial derivative slopes
+
+library(runjags)
+
+results <- readRDS("lma.rmf.light.jags_results.RData")
+lma.rmf.light.results=do.call(rbind,results) # combine output from 6 MCMC chains
+lma.rmf.light.sample.df=lma.rmf.light.results[,c(3,5,6,8)] # extract columns of parameters needed
+
+# subsetting results to only include last 20,000 iterations from each of the 6 chains
+chain1=lma.rmf.light.results[c(30001:50000),]
+chain2=lma.rmf.light.results[c(80001:100000),]
+chain3=lma.rmf.light.results[c(130001:150000),]
+chain4=lma.rmf.light.results[c(180001:200000),]
+chain5=lma.rmf.light.results[c(230001:250000),]
+chain6=lma.rmf.light.results[c(280001:300000),]
+
+new.lma.rmf.light.results=rbind(chain1,chain2,chain3,chain4,chain5,chain6)
+new.lma.rmf.light.results.par=new.lma.rmf.light.results[,c(3,5,6,8)]
+
+# Sample random row of parameter values and calculate first partial derivative.
+
+final.data=read.csv("Final.Data.csv", header=T, row.names=1)
+lma.rmf.light.slopes=matrix(data=NA, nrow=1559, ncol=1000)
+
+for(i in 1:1000){
+row.sample=lma.rmf.light.sample.df[sample(nrow(lma.rmf.light.sample.df), 1),]
+lma.rmf.light.output=row.sample[1]+row.sample[2]*final.data$log.rmf+row.sample[3]*final.data$log.light+row.sample[4]*(final.data$log.rmf*final.data$log.light)
+lma.rmf.light.slopes[,i]=lma.rmf.light.output
+}
+
+lma.rmf.light=read.csv("lma.rmf.light.rgr.Parameters.csv", header=T, row.names=1) # mean parameter values from model
+
+# value of first partial derivative from mean parameter values
+
+lma.rmf.light.mean=lma.rmf.light[3,2]+lma.rmf.light[5,2]*final.data$log.rmf+lma.rmf.light[6,2]*final.data$log.light+lma.rmf.light[8,2]*(final.data$log.rmf*final.data$log.light)
+
+# regression to get slope and intercept value for plotting
+
+lma.rmf.light.mean.lm=lm(lma.rmf.light.mean~final.data$log.rmf*final.data$log.light)
+
+plot((final.data$log.rmf*final.data$log.light),lma.rmf.light.mean,type="n")
+abline(-0.07649, 0.05305, col="black") # intercept and slope
+
+# run linear models for 1000 iterations of the first partial derivative calculated above.
+
+lm.1000=matrix(data=NA, ncol=2, nrow=1000)
+
+for(i in 1:1000){
+lin.mod=lm(lma.rmf.light.slopes[,i]~final.data$log.rmf*final.data$log.light)
+lm.1000[i,1]=lin.mod$coefficients[1] # intercept
+lm.1000[i,2]=lin.mod$coefficients[4] # slope
+}
+# Determine CIs for intercept and slope distributions
+
+quant.intercept=quantile(lm.1000[,1], probs=c(0.025, 0.975))
+quant.slope=quantile(lm.1000[,2], probs=c(0.025, 0.975))
+
+plot((final.data$log.rmf*final.data$log.light),lma.rmf.light.mean, type="n")
+abline(-0.07649, 0.05305, col="black") # mean value
+abline(-0.13564211,0.01492716, col="gray") # lower limit
+abline(-0.01790535,0.09167430, col="gray") # upper limit
+
+# Plotting all of the first partial derivatives
+
+for(i in 1:1000){
+plot((final.data$log.rmf*final.data$log.light),lma.rmf.light.slopes[,i], col="gray",ylim=c(-0.80,0.95),ylab=NA, type="l")
+par(new=TRUE)
+}
+par(new=TRUE)
+plot((final.data$log.rmf*final.data$log.light),lma.rmf.light.mean, ylim=c(-0.80,0.95), ylab="slope of the LMA*RMF*Light relationship with RGR", type="l")
+
+# Code to produce 95% credible intervals around partial effects
+
+# Slope based on mean parameter values
+lma.rmf.light.HH=lma.rmf.light[3,2]+lma.rmf.light[5,2]*3.32+lma.rmf.light[6,2]*2.97+lma.rmf.light[8,2]*(3.32*2.97)
+0.4429909
+lma.rmf.light.LH=lma.rmf.light[3,2]+lma.rmf.light[5,2]*-5.53+lma.rmf.light[6,2]*2.97+lma.rmf.light[8,2]*(-5.53*2.97)
+-1.103356
+lma.rmf.light.LL=lma.rmf.light[3,2]+lma.rmf.light[5,2]*-5.53+lma.rmf.light[6,2]*-2.69+lma.rmf.light[8,2]*(-5.53*-2.69)
+0.6726187
+lma.rmf.light.HL=lma.rmf.light[3,2]+lma.rmf.light[5,2]*3.32+lma.rmf.light[6,2]*-2.69+lma.rmf.light[8,2]*(3.32*-2.69)
+-0.4383616
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+# Randomly generate the 1000 datasets
+lma.rmf.light.slopes.HH=matrix(data=NA, nrow=1000, ncol=1)
+lma.rmf.light.slopes.LH=matrix(data=NA, nrow=1000, ncol=1)
+lma.rmf.light.slopes.LL=matrix(data=NA, nrow=1000, ncol=1)
+lma.rmf.light.slopes.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.rmf.light.results.par[sample(nrow(new.lma.rmf.light.results.par), 1),]
+lma.rmf.light.output.HH=row.sample[1]+row.sample[2]*3.32+row.sample[3]*2.97+row.sample[4]*(3.32*2.97)
+lma.rmf.light.output.LH=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*2.97+row.sample[4]*(-5.53*2.97)
+lma.rmf.light.output.LL=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*-2.69+row.sample[4]*(-5.53*-2.69)
+lma.rmf.light.output.HL=row.sample[1]+row.sample[2]*3.32+row.sample[3]*-2.69+row.sample[4]*(3.32*-2.69)
+lma.rmf.light.slopes.HH[i,]=lma.rmf.light.output.HH
+lma.rmf.light.slopes.LH[i,]=lma.rmf.light.output.LH
+lma.rmf.light.slopes.LL[i,]=lma.rmf.light.output.LL
+lma.rmf.light.slopes.HL[i,]=lma.rmf.light.output.HL
+}
+
+high.light=cbind(lma.rmf.light.slopes.HH, lma.rmf.light.slopes.LH)
+# 972/1000 have different slopes
+# CI = 0.9618111 1.0000000
+# 971/1000 have different slopes and direction matches mean slope direction
+# CI = 0.9606681 1.0000000
+
+low.light=cbind(lma.rmf.light.slopes.LL, lma.rmf.light.slopes.HL)
+# 981/1000 have different slopes
+# CI =  0.9722447 1.0000000
+# 974/1000 have different slopes and direction matches mean slope direction
+# CI = 0.9641057 1.0000000
+
+
+## Intercepts
+
+new.lma.rmf.light.intercept.par=new.lma.rmf.light.results[,c(1,4,2,7)]# extract columns of parameters needed
+
+# Intercept based on mean parameter values
+lma.rmf.light.HH=lma.rmf.light[1,2]+lma.rmf.light[4,2]*3.32+lma.rmf.light[2,2]*2.97+lma.rmf.light[7,2]*(3.32*2.97)
+-0.2655351
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+lma.rmf.light.intercepts.HH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.rmf.light.intercept.par[sample(nrow(new.lma.rmf.light.intercept.par), 1),]
+lma.rmf.light.output.HH=row.sample[1]+row.sample[2]*3.32+row.sample[3]*2.97+row.sample[4]*(3.32*2.97)
+lma.rmf.light.intercepts.HH[i,]=lma.rmf.light.output.HH
+}
+
+HH.quantile.intercept=quantile(lma.rmf.light.intercepts.HH[,1], probs=c(0.025, 0.975))
+
+lower = -9.78641 upper = 6.62261
+
+lma.rmf.light.LH=lma.rmf.light[1,2]+lma.rmf.light[4,2]*-5.53+lma.rmf.light[2,2]*2.97+lma.rmf.light[7,2]*(-5.53*2.97)
+2.521027
+
+lma.rmf.light.intercepts.LH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.rmf.light.intercept.par[sample(nrow(new.lma.rmf.light.intercept.par), 1),]
+lma.rmf.light.output.LH=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*2.97+row.sample[4]*(-5.53*2.97)
+lma.rmf.light.intercepts.LH[i,]=lma.rmf.light.output.LH
+}
+
+LH.quantile.intercept=quantile(lma.rmf.light.intercepts.LH[,1], probs=c(0.025, 0.975))
+
+lower = -6.388166 upper = 9.373123
+
+lma.rmf.light.LL=lma.rmf.light[1,2]+lma.rmf.light[4,2]*-5.53+lma.rmf.light[2,2]*-2.69+lma.rmf.light[7,2]*(-5.53*-2.69)
+0.2403631
+
+lma.rmf.light.intercepts.LL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.rmf.light.intercept.par[sample(nrow(new.lma.rmf.light.intercept.par), 1),]
+lma.rmf.light.output.LL=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*-2.69+row.sample[4]*(-5.53*-2.69)
+lma.rmf.light.intercepts.LL[i,]=lma.rmf.light.output.LL
+}
+
+LL.quantile.intercept=quantile(lma.rmf.light.intercepts.LL[,1], probs=c(0.025, 0.975))
+
+lower = -9.393615 upper = 7.089447 
+
+lma.rmf.light.HL=lma.rmf.light[1,2]+lma.rmf.light[4,2]*3.32+lma.rmf.light[2,2]*-2.69+lma.rmf.light[7,2]*(3.32*-2.69)
+0.2158185
+
+lma.rmf.light.intercepts.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.lma.rmf.light.intercept.par[sample(nrow(new.lma.rmf.light.intercept.par), 1),]
+lma.rmf.light.output.HL=row.sample[1]+row.sample[2]*3.32+row.sample[3]*-2.69+row.sample[4]*(3.32*-2.69)
+lma.rmf.light.intercepts.HL[i,]=lma.rmf.light.output.HL
+}
+
+HL.quantile.intercept=quantile(lma.rmf.light.intercepts.HL[,1], probs=c(0.025, 0.975))
+
+lower = -9.479971 upper = 6.958876 
+
+# Plot Original
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+abline(-0.2655351,0.4429909, col="black", lwd=4)
+abline(2.521027,-1.103356, col="blue", lwd=4)
+abline(0.2403631,0.6726187, col="coral", lwd=4)
+abline(0.2158185,-0.4383616, col="forest green", lwd=4)
+legend("topright", legend=c("RMF  Light","High  High", "Low   High", "Low   Low", "High  Low"),
+col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
+
+# Plot of HH
+
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-9.8,6.7))
+abline(-0.2655351,0.4429909, col="black", lwd=4) # original
+abline(-9.78641, -0.002752758 , col="gray", lwd=4) # lower
+abline(6.62261, 0.890741072  , col="gray", lwd=4) # upper
+
+# Plot of LH
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-6.4,9.4))
+abline(2.521027,-1.103356, col="blue", lwd=4)
+abline(-6.388166, -1.8263323, col="gray", lwd=4)
+abline(9.373123 , -0.3522949, col="gray", lwd=4)
+
+# Plot of LL
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-9.4,7.1))
+abline(0.2403631,0.6726187, col="coral", lwd=4)
+abline(-9.393615, 0.05906167, col="gray", lwd=4)
+abline(7.089447 , 1.22943267 , col="gray", lwd=4)
+
+# Plot of HL
+plot(final.data$scale.log.lma, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate", ylim=c(-9.5,7.0))
+abline(0.2158185,-0.4383616, col="forest green", lwd=4)
+abline(-9.479971, -0.81336761, col="gray", lwd=4)
+abline(6.958876 , -0.01253058  , col="gray", lwd=4)
+
+
+
+
+
+Checking correlation between variables: https://statisticalhorizons.com/multicollinearity
+library(fmsb)
+VIF(lm(scale.log.lma~log.smf+log.light, final.data)) # lower bound is 1, with no upper bound.
+# LMA x RMF x Light
+VIF(lm(scale.log.lma~log.rmf+log.light, final.data)) # 1.009
+VIF(lm(scale.log.lma~log.rmf, final.data)) # 1.001
+# LMA x SMF x Light
+VIF(lm(scale.log.lma~log.smf+log.light, final.data)) #1.05
+VIF(lm(scale.log.lma~log.smf, final.data)) #1.05
+# Mean thick x SSL x PC2
+VIF(lm(log.mean.thick~log.ssl+Comp.2, final.data)) # 1.05
+VIF(lm(log.mean.thick~log.ssl, final.data)) # 1.05
+# Mean thick x SMF X PC1
+VIF(lm(log.mean.thick~log.smf+Comp.1, final.data)) # 1.01
+VIF(lm(log.mean.thick~log.smf, final.data)) # 1.01
+# Mean thick x RMF x PC1
+VIF(lm(log.mean.thick~log.rmf+Comp.1, final.data)) # 1.04
+VIF(lm(log.mean.thick~log.rmf, final.data)) # 1.04
+# LAR x LMF x PC2
+VIF(lm(log.lar1~log.lmf+Comp.2, final.data)) # 3.26, moderately correlated
+VIF(lm(log.lar1~log.lmf, final.data)) # 3.23
+# LMA x RMF x PC2
+VIF(lm(scale.log.lma~log.rmf+Comp.2, final.data)) # 1.01
+VIF(lm(scale.log.lma~log.rmf, final.data)) # 1.001
+# LMA x RMF x PC1
+VIF(lm(scale.log.lma~log.rmf+Comp.1, final.data)) # 1.002
+VIF(lm(scale.log.lma~log.rmf, final.data)) # 1.000
+
+
+
+
+
+
+
+
+

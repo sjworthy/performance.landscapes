@@ -1,0 +1,212 @@
+results <- readRDS("thick.rmf.pc1.jags_results.RData")
+thick.rmf.Comp.1.results=do.call(rbind,results) # combine output from 6 MCMC chains
+thick.rmf.Comp.1.sample.df=thick.rmf.Comp.1.results[,c(3,5,6,8)] # extract columns of parameters needed
+
+# subsetting results to only include last 20,000 iterations from each of the 6 chains
+chain1=thick.rmf.Comp.1.results[c(30001:50000),]
+chain2=thick.rmf.Comp.1.results[c(80001:100000),]
+chain3=thick.rmf.Comp.1.results[c(130001:150000),]
+chain4=thick.rmf.Comp.1.results[c(180001:200000),]
+chain5=thick.rmf.Comp.1.results[c(230001:250000),]
+chain6=thick.rmf.Comp.1.results[c(280001:300000),]
+
+new.thick.rmf.Comp.1.results=rbind(chain1,chain2,chain3,chain4,chain5,chain6)
+new.thick.rmf.Comp.1.results.par=new.thick.rmf.Comp.1.results[,c(3,5,6,8)]
+
+# Sample random row of parameter values and calculate first partial derivative.
+
+final.data=read.csv("Final.Data.csv", header=T, row.names=1)
+thick.rmf.Comp.1.slopes=matrix(data=NA, nrow=1559, ncol=1000)
+
+for(i in 1:1000){
+row.sample=thick.rmf.Comp.1.sample.df[sample(nrow(thick.rmf.Comp.1.sample.df), 1),]
+thick.rmf.Comp.1.output=row.sample[1]+row.sample[2]*final.data$log.rmf+row.sample[3]*final.data$Comp.1+row.sample[4]*(final.data$log.rmf*final.data$Comp.1)
+thick.rmf.Comp.1.slopes[,i]=thick.rmf.Comp.1.output
+}
+
+thick.rmf.Comp.1=read.csv("thick.rmf.pc1.rgr.Parameters.csv", header=T, row.names=1) # mean parameter values from model
+
+# value of first partial derivative from mean parameter values
+
+thick.rmf.Comp.1.mean=thick.rmf.Comp.1[3,2]+thick.rmf.Comp.1[5,2]*final.data$log.rmf+thick.rmf.Comp.1[6,2]*final.data$Comp.1+thick.rmf.Comp.1[8,2]*(final.data$log.rmf*final.data$Comp.1)
+
+# regression to get slope and intercept value for plotting
+
+thick.rmf.Comp.1.mean.lm=lm(thick.rmf.Comp.1.mean~final.data$log.rmf*final.data$Comp.1)
+
+plot((final.data$log.rmf*final.data$Comp.1),thick.rmf.Comp.1.mean,type="n")
+abline( -0.05740, 0.03601, col="black") # intercept and slope
+
+# run linear models for 1000 iterations of the first partial derivative calculated above.
+
+lm.1000=matrix(data=NA, ncol=2, nrow=1000)
+
+for(i in 1:1000){
+lin.mod=lm(thick.rmf.Comp.1.slopes[,i]~final.data$log.rmf*final.data$Comp.1)
+lm.1000[i,1]=lin.mod$coefficients[1] # intercept
+lm.1000[i,2]=lin.mod$coefficients[4] # slope
+}
+# Determine CIs for intercept and slope distributions
+
+quant.intercept=quantile(lm.1000[,1], probs=c(0.025, 0.975))
+quant.slope=quantile(lm.1000[,2], probs=c(0.025, 0.975))
+
+plot((final.data$log.rmf*final.data$Comp.1),thick.rmf.Comp.1.mean, type="n")
+abline(-0.05740, 0.03601, col="black") # mean value
+abline(-0.12949604,0.01707626, col="gray") # lower limit
+abline(0.01408866 ,0.05638533, col="gray") # upper limit
+
+# Plotting all of the first partial derivatives
+
+for(i in 1:1000){
+plot((final.data$log.rmf*final.data$Comp.1),thick.rmf.Comp.1.slopes[,i], col="gray",ylim=c(-0.20,0.02),ylab=NA, type="l")
+par(new=TRUE)
+}
+par(new=TRUE)
+plot((final.data$log.rmf*final.data$Comp.1),thick.rmf.Comp.1.mean, ylim=c(-0.20,0.02), ylab="slope of the thick*rmf*Light relationship with RGR", type="l")
+
+# Code to produce 95% credible intervals around partial effects
+
+# Slope based on mean parameter values
+thick.rmf.pc1.HH=thick.rmf.pc1[3,2]+thick.rmf.pc1[5,2]*3.32+thick.rmf.pc1[6,2]*6.02+thick.rmf.pc1[8,2]*(3.32*6.02)
+0.7411207
+thick.rmf.pc1.LH=thick.rmf.pc1[3,2]+thick.rmf.pc1[5,2]*-5.53+thick.rmf.pc1[6,2]*6.02+thick.rmf.pc1[8,2]*(-5.53*6.02)
+-1.428547
+thick.rmf.pc1.LL=thick.rmf.pc1[3,2]+thick.rmf.pc1[5,2]*-5.53+thick.rmf.pc1[6,2]*-6.06+thick.rmf.pc1[8,2]*(-5.53*-6.06)
+1.007932
+thick.rmf.pc1.HL=thick.rmf.pc1[3,2]+thick.rmf.pc1[5,2]*3.32+thick.rmf.pc1[6,2]*-6.06+thick.rmf.pc1[8,2]*(3.32*-6.06)
+-0.6721572
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+thick.rmf.Comp.1.slopes.HH=matrix(data=NA, nrow=1000, ncol=1)
+thick.rmf.Comp.1.slopes.LH=matrix(data=NA, nrow=1000, ncol=1)
+thick.rmf.Comp.1.slopes.LL=matrix(data=NA, nrow=1000, ncol=1)
+thick.rmf.Comp.1.slopes.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.rmf.Comp.1.results.par[sample(nrow(new.thick.rmf.Comp.1.results.par), 1),]
+thick.rmf.Comp.1.output.HH=row.sample[1]+row.sample[2]*3.32+row.sample[3]*6.02+row.sample[4]*(3.32*6.02)
+thick.rmf.Comp.1.output.LH=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*6.02+row.sample[4]*(-5.53*6.02)
+thick.rmf.Comp.1.output.LL=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*-6.06+row.sample[4]*(-5.53*-6.06)
+thick.rmf.Comp.1.output.HL=row.sample[1]+row.sample[2]*3.32+row.sample[3]*-6.06+row.sample[4]*(3.32*-6.06)
+thick.rmf.Comp.1.slopes.HH[i,]=thick.rmf.Comp.1.output.HH
+thick.rmf.Comp.1.slopes.LH[i,]=thick.rmf.Comp.1.output.LH
+thick.rmf.Comp.1.slopes.LL[i,]=thick.rmf.Comp.1.output.LL
+thick.rmf.Comp.1.slopes.HL[i,]=thick.rmf.Comp.1.output.HL
+}
+
+high.soil=cbind(thick.rmf.Comp.1.slopes.HH, thick.rmf.Comp.1.slopes.LH)
+write.csv(high.soil, file="thick.rmf.high.pc1.csv")
+# 998/1000 have different slopes
+# CI = 0.9937177 1.0000000
+# 998/1000 have different slopes and direction matches mean slope direction
+# CI = 0.9937177 1.0000000
+
+low.soil=cbind(thick.rmf.Comp.1.slopes.LL, thick.rmf.Comp.1.slopes.HL)
+write.csv(low.soil, file="thick.rmf.low.pc1.csv")
+# 995/1000 have different slopes
+# CI = 0.9895159 1.0000000
+# 995/1000 have different slopes and direction matches mean slope direction
+# CI = 0.9895159 1.0000000
+
+## Intercepts
+
+new.thick.rmf.Comp.1.intercept.par=new.thick.rmf.Comp.1.results[,c(1,4,2,7)]# extract columns of parameters needed
+
+# Intercept based on mean parameter values
+thick.rmf.pc1.HH=thick.rmf.pc1[1,2]+thick.rmf.pc1[4,2]*3.32+thick.rmf.pc1[2,2]*6.02+thick.rmf.pc1[7,2]*(3.32*6.02)
+1.291638
+
+# Sample dataframe of last 20,000 iterations of each MCMC chain, recalculate slope
+
+thick.rmf.Comp.1.intercepts.HH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.rmf.Comp.1.intercept.par[sample(nrow(new.thick.rmf.Comp.1.intercept.par), 1),]
+thick.rmf.Comp.1.output.HH=row.sample[1]+row.sample[2]*3.32+row.sample[3]*6.02+row.sample[4]*(3.32*6.02)
+thick.rmf.Comp.1.intercepts.HH[i,]=thick.rmf.Comp.1.output.HH
+}
+
+HH.quantile.intercept=quantile(thick.rmf.Comp.1.intercepts.HH[,1], probs=c(0.025, 0.975))
+
+lower = -4.018845 upper = 10.451616
+
+thick.rmf.pc1.LH=thick.rmf.pc1[1,2]+thick.rmf.pc1[4,2]*-5.53+thick.rmf.pc1[2,2]*6.02+thick.rmf.pc1[7,2]*(-5.53*6.02)
+2.976948
+
+thick.rmf.Comp.1.intercepts.LH=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.rmf.Comp.1.intercept.par[sample(nrow(new.thick.rmf.Comp.1.intercept.par), 1),]
+thick.rmf.Comp.1.output.LH=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*6.02+row.sample[4]*(-5.53*6.02)
+thick.rmf.Comp.1.intercepts.LH[i,]=thick.rmf.Comp.1.output.LH
+}
+
+LH.quantile.intercept=quantile(thick.rmf.Comp.1.intercepts.LH[,1], probs=c(0.025, 0.975))
+
+lower = -2.635523 upper = 11.961559 
+
+thick.rmf.pc1.LL=thick.rmf.pc1[1,2]+thick.rmf.pc1[4,2]*-5.53+thick.rmf.pc1[2,2]*-6.06+thick.rmf.pc1[7,2]*(-5.53*-6.06)
+3.091157
+
+thick.rmf.Comp.1.intercepts.LL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.rmf.Comp.1.intercept.par[sample(nrow(new.thick.rmf.Comp.1.intercept.par), 1),]
+thick.rmf.Comp.1.output.LL=row.sample[1]+row.sample[2]*-5.53+row.sample[3]*-6.06+row.sample[4]*(-5.53*-6.06)
+thick.rmf.Comp.1.intercepts.LL[i,]=thick.rmf.Comp.1.output.LL
+}
+
+LL.quantile.intercept=quantile(thick.rmf.Comp.1.intercepts.LL[,1], probs=c(0.025, 0.975))
+
+lower = -2.380449  upper = 12.221396
+
+thick.rmf.pc1.HL=thick.rmf.pc1[1,2]+thick.rmf.pc1[4,2]*3.32+thick.rmf.pc1[2,2]*-6.06+thick.rmf.pc1[7,2]*(3.32*-6.06)
+2.53052
+
+thick.rmf.Comp.1.intercepts.HL=matrix(data=NA, nrow=1000, ncol=1)
+
+for(i in 1:1000){
+row.sample=new.thick.rmf.Comp.1.intercept.par[sample(nrow(new.thick.rmf.Comp.1.intercept.par), 1),]
+thick.rmf.Comp.1.output.HL=row.sample[1]+row.sample[2]*3.32+row.sample[3]*-6.06+row.sample[4]*(3.32*-6.06)
+thick.rmf.Comp.1.intercepts.HL[i,]=thick.rmf.Comp.1.output.HL
+}
+
+HL.quantile.intercept=quantile(thick.rmf.Comp.1.intercepts.HL[,1], probs=c(0.025, 0.975))
+
+lower = -3.033732 upper = 11.540089 
+
+# Plot Original
+plot(final.data$log.thick, final.data$log.rgr, type="n", xlab="Leaf Mass per Area", ylab="Relative Growth Rate")
+abline(-0.2655351,0.4429909, col="black", lwd=4)
+abline(2.521027,-1.103356, col="blue", lwd=4)
+abline(0.2403631,0.6726187, col="coral", lwd=4)
+abline(0.2158185,-0.4383616, col="forest green", lwd=4)
+legend("topright", legend=c("rmf  Light","High  High", "Low   High", "Low   Low", "High  Low"),
+col=c("NA","black", "blue", "coral", "forest green"), lty=1, lwd=4)
+
+# Plot of HH
+
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-4.1,10.5))
+abline(1.291638,0.7411207, col="black", lwd=4) # original
+abline(-4.018845, 0.2909808, col="gray", lwd=4) # lower
+abline(10.451616, 1.2372327  , col="gray", lwd=4) # upper
+
+# Plot of LH
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-2.7,12))
+abline(2.976948,-1.428547, col="blue", lwd=4)
+abline(-2.635523, -2.2092920, col="gray", lwd=4)
+abline(11.961559 , -0.6984886 , col="gray", lwd=4)
+
+# Plot of LL
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-2.4,12.3))
+abline(3.091157,1.007932, col="coral", lwd=4)
+abline(-2.380449,0.3241789, col="gray", lwd=4)
+abline(12.221396, 1.7170146 , col="gray", lwd=4)
+
+# Plot of HL
+plot(final.data$log.mean.thick, final.data$log.rgr, type="n", xlab="Leaf Thickness", ylab="Relative Growth Rate", ylim=c(-3.1,11.6))
+abline(2.53052,-0.6721572, col="forest green", lwd=4)
+abline(-3.033732, -1.1703306, col="gray", lwd=4)
+abline(11.540089 ,-0.1689687 , col="gray", lwd=4)
